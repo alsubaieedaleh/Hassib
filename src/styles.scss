@@ -1,1 +1,43 @@
+@import 'tailwindcss';
+ 
+
+
 /* You can add global styles to this file, and also import other style files */
+:root{--bg:#f7fafc;--card:#ffffff;--muted:#6b7280;--accent:#0ea5a4;--danger:#ef4444;--glass:rgba(255,255,255,0.6)}
+html,body{height:100%}
+body{margin:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,#f8fafc 0%,#eef2f7 100%);color:#0f172a;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;padding:16px}
+.container{max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:56px;height:56px;background:var(--card);border-radius:8px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(2,6,23,.08)}
+.logo img{max-width:46px;max-height:46px}
+h1{font-size:18px;margin:0}
+p.lead{margin:4px 0 0;color:var(--muted);font-size:13px}
+.disclaimer{font-size:12px;color:var(--muted);margin-top:8px;background:rgba(15,23,42,.03);padding:10px;border-radius:8px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:16px;margin-top:12px}
+.card{background:var(--card);border-radius:10px;padding:12px;box-shadow:0 6px 18px rgba(15,23,42,.04)}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+label{font-size:13px;color:var(--muted)}
+input[type="text"],input[type="number"],select{width:100%;padding:8px;border-radius:8px;border:1px solid #e6eef4;background:transparent;font-size:14px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+button.btn{background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:8px;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #e2e8f0;padding:8px;border-radius:8px;cursor:pointer}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{padding:8px 6px;border-bottom:1px solid rgba(2,6,23,.04);font-size:13px;text-align:center}
+th{background:#fbfbfc;font-weight:600;color:#0f172a}
+tfoot td{font-weight:700}
+.summary{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.metric{display:flex;justify-content:space-between;padding:8px;border-radius:8px;background:linear-gradient(90deg,#fbfdff,#fff)}
+.small{font-size:12px;color:var(--muted)}
+.payment-break{font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.mobile-hide{display:block}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.mobile-hide{display:none}}
+.footer-note{font-size:12px;color:var(--muted);margin-top:10px}
+.prod-manager{margin-top:12px;border-top:1px dashed #eef2f6;padding-top:10px}
+.prod-row{display:flex;gap:8px;margin-top:6px}
+.prod-row input{padding:8px;border-radius:8px;border:1px solid #e6eef4}
+.prod-list{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.prod-chip{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px;background:#fbfbff;border:1px solid #eef2f6;font-size:13px}
+.pay-manager{margin-top:10px;border-top:1px dashed #e6eef4;padding-top:10px}
+.pay-list{margin-top:8px;display:flex;flex-direction:column;gap:6px}

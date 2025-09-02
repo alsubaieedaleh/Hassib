@@ -1,0 +1,30 @@
+<h3 style="margin:6px 0">Session Summary</h3>
+
+@if (lines().length > 0) {
+  <div #reportRoot>
+    <div class="summary">
+      <div class="metric"><span class="small">Lines</span><span>{{ lines().length }}</span></div>
+      <div class="metric"><span class="small">Total Qty</span><span>{{ totalQty() }}</span></div>
+      <div class="metric"><span class="small">Total Sales (Gross)</span><span>SAR {{ totalGross() | number:'1.2-2' }}</span></div>
+      <div class="metric"><span class="small">Total VAT</span><span>SAR {{ totalVAT() | number:'1.2-2' }}</span></div>
+      <div class="metric"><span class="small">Net Profit</span><span>SAR {{ totalProfit() | number:'1.2-2' }}</span></div>
+    </div>
+
+    <div style="margin-top:10px">
+      <div class="small">Payment Breakdown</div>
+      <div class="payment-break">{{ paymentBreakdownText() }}</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn" (click)="exportPDF()">Export PDF</button>
+    <button class="btn" (click)="exportXLSX()">Export Excel</button>
+    <button class="ghost" (click)="exportCSV()">Export CSV</button>
+  </div>
+} @else {
+  <div class="small" style="color:var(--muted)">No session lines yet.</div>
+}
+
+<div class="footer-note small mobile-hide">
+  Tip: Use the export as a quick record at shift-end. No data leaves your device unless you choose to share.
+</div>

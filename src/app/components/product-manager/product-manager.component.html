@@ -1,0 +1,12 @@
+@for (p of products(); track $index;  ) {
+  <div class="prod-chip">
+    <div style="text-align:left">
+      <strong>{{p.name}}</strong>
+      <div class="small">Barcode: {{p.barcode || '—'}} • Price: SAR {{p.price | number:'1.2-2'}}</div>
+    </div>
+    <button class="ghost" (click)="removeProduct(products().indexOf(p))">Delete</button>
+  </div>
+}
+@if (products().length === 0) {
+  <div class="small" style="color:var(--muted)">No saved products on this device.</div>
+}

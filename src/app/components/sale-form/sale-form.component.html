@@ -1,0 +1,71 @@
+<div class="space-y-4">
+  <!-- First row -->
+  <div class="grid grid-cols-5 gap-4">
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Barcode (scan or type)</label>
+      <input type="text" placeholder="1234567890"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+             [ngModel]="barcode()" (ngModelChange)="barcode.set($event)">
+    </div>
+
+    <div class="col-span-2 flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Product name</label>
+      <input type="text" placeholder="e.g. Acme Honey 500g"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+             [ngModel]="name()" (ngModelChange)="name.set($event)">
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Qty</label>
+      <input type="number" min="1"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+             [ngModel]="qty()" (ngModelChange)="qty.set($event)">
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Sell Price (SAR)</label>
+      <input type="number" min="0" step="0.01"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+             [ngModel]="price()" (ngModelChange)="price.set($event)">
+    </div>
+  </div>
+
+  <!-- Second row -->
+  <div class="grid grid-cols-3 gap-4">
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">VAT (%) — FIXED</label>
+      <input type="number" readonly min="0" step="0.01"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm bg-gray-100"
+             [ngModel]="vatrate()" (ngModelChange)="vatrate.set($event)">
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Payment Type</label>
+      <select
+        class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        [ngModel]="payment()" (ngModelChange)="payment.set($event)">
+        <option>Cash</option>
+        <option>Mada</option>
+        <option>Credit Card</option>
+        <option>On Account</option>
+      </select>
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm font-medium text-gray-600">Customer phone (optional)</label>
+      <input type="text" placeholder="0501234567 or Walk-in"
+             class="mt-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+             [ngModel]="phone()" (ngModelChange)="phone.set($event)">
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3">
+    <button class="bg-teal-600 hover:bg-teal-700 text-white text-sm font-medium px-4 py-2 rounded-md shadow"
+            (click)="submit()">Add to Session</button>
+    <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-4 py-2 rounded-md shadow"
+            (click)="clear()">Clear</button>
+    <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-4 py-2 rounded-md shadow"
+            (click)="clear()">Reset Session</button>
+  </div>
+</div>
