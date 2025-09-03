@@ -2,40 +2,36 @@
   <table aria-live="polite">
     <thead>
       <tr>
-        <th>#</th><th>Barcode</th><th>Product</th><th>Qty</th>
-        <th>Cost</th><th>Sell (Gross)</th><th>VAT (15% incl)</th><th>Net Profit</th><th>Payment</th><th>Phone</th>
+        @for (col of columns; track col.key) {
+          <th>{{ col.label }}</th>
+        }
       </tr>
     </thead>
+
     <tbody>
-      @for (ln of lines(); track $index; ) {
+      @for (ln of lines(); track $index; let i = $index) {
         <tr>
-          <td>{{lines().indexOf(ln)+1}}</td>
-          <td>{{ln.barcode}}</td>
-          <td style="text-align:left;padding-left:10px">{{ln.name}}</td>
-          <td>{{ln.qty}}</td>
-          <td>SAR {{ln.cost | number:'1.2-2'}}</td>
-          <td>SAR {{ln.grossTotal | number:'1.2-2'}}</td>
-          <td>SAR {{ln.vatAmount | number:'1.2-2'}}</td>
-          <td>SAR {{ln.profit | number:'1.2-2'}}</td>
-          <td>{{ln.payment}}</td>
-          <td>{{ln.phone}}</td>
+          @for (col of columns; track col.key) {
+            <td [class]="col.class">{{ col.format ? col.format(ln, i) : '' }}</td>
+          }
         </tr>
       }
     </tbody>
+
     <tfoot>
       <tr>
         <td colspan="3">Totals</td>
-        <td>{{totalQty()}}</td>
-        <td></td>
-        <td>SAR {{totalGross() | number:'1.2-2'}}</td>
-        <td>SAR {{totalVAT() | number:'1.2-2'}}</td>
-        <td>SAR {{totalProfit() | number:'1.2-2'}}</td>
+        <td>{{ totalQty() }}</td>
+        <td>SAR {{ totalCost() | number:'1.2-2' }}</td>
+        <td>SAR {{ totalGross() | number:'1.2-2' }}</td>
+        <td>SAR {{ totalVAT() | number:'1.2-2' }}</td>
+        <td>SAR {{ totalProfit() | number:'1.2-2' }}</td>
         <td colspan="2"></td>
       </tr>
       <tr>
         <td colspan="4"></td>
         <td colspan="6" style="text-align:left;padding-left:10px;">
-          <strong>By Payment:</strong> {{paymentBreakdownText()}}
+          <strong>By Payment:</strong> {{ paymentBreakdownText() }}
         </td>
       </tr>
     </tfoot>

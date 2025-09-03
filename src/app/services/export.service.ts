@@ -27,7 +27,7 @@ export class ExportService {
     pdf.save('session_report.pdf');
   }
 
-  exportXLSX(lines: Line[], totals: { qty: number; gross: number; vat: number; profit: number }) {
+  exportXLSX(lines: Line[], totals: { qty: number;cost:number; gross: number; vat: number; profit: number }) {
     if (lines.length === 0) {
       alert('No lines to export.');
       return;
@@ -48,6 +48,7 @@ export class ExportService {
     const summary = [
       ['Total Lines', lines.length],
       ['Total Qty', totals.qty],
+      ["Total Cost", totals.cost],
       ['Total Sales (Gross)', totals.gross.toFixed(2)],
       ['Total VAT', totals.vat.toFixed(2)],
       ['Net Profit', totals.profit.toFixed(2)]
@@ -58,7 +59,7 @@ export class ExportService {
     XLSX.writeFile(wb, 'session_report.xlsx');
   }
 
-  exportCSV(lines: Line[], totals: { qty: number; gross: number; vat: number; profit: number }) {
+  exportCSV(lines: Line[], totals: { qty: number; cost:number; gross: number; vat: number; profit: number }) {
     if (lines.length === 0) {
       alert('No lines to export.');
       return;
@@ -72,7 +73,7 @@ export class ExportService {
         ln.profit.toFixed(2), ln.payment, safe(ln.phone)
       ].join(',') + '\n';
     });
-    csv += '\nTotals,,'+totals.qty+',,'+totals.gross.toFixed(2)+','+totals.vat.toFixed(2)+','+totals.profit.toFixed(2)+'\n';
+    csv += '\nTotals,,'+totals.qty+',,' + totals.cost.toFixed(2) + ',,' + totals.gross.toFixed(2)+','+totals.vat.toFixed(2)+','+totals.profit.toFixed(2)+'\n';
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
