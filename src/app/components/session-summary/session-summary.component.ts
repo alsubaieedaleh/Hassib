@@ -14,7 +14,7 @@ type Action = { key: 'pdf'|'xlsx'|'csv'; label: string; css: string; run: () => 
 })
 export class SessionSummaryComponent {
   lines = input<Line[]>([]);
-
+  receipts = input<Line[][]>([]);
   // totals
   totalQty   = computed(() => this.lines().reduce((s, l) => s + l.qty, 0));
   totalCost  = computed(() => this.lines().reduce((s, l) => s + (l.cost * l.qty), 0));
@@ -48,33 +48,42 @@ export class SessionSummaryComponent {
   ]);
 
   // actions list (button label + handler)
-  actions = computed<Action[]>(() => [
-    {
-      key: 'pdf',
-      label: 'Export PDF',
-      css: 'btn',
-      run: () => {
-        const root = this.reportRoot()?.nativeElement;
-        if (root) this.exportSvc.exportPDF(this.lines(), root);
-      }
-    },
-    {
-      key: 'xlsx',
-      label: 'Export Excel',
-      css: 'btn',
-      run: () => this.exportSvc.exportXLSX(this.lines(), {
-        qty: this.totalQty(), cost: this.totalCost(), gross: this.totalGross(), vat: this.totalVAT(), profit: this.totalProfit()
-      }),
-    },
-    {
-      key: 'csv',
-      label: 'Export CSV',
-      css: 'ghost',
-      run: () => this.exportSvc.exportCSV(this.lines(), {
-        qty: this.totalQty(), cost: this.totalCost(), gross: this.totalGross(), vat: this.totalVAT(), profit: this.totalProfit()
-      })
+ actions = computed<Action[]>(() => [
+  {
+    key: 'pdf',
+    label: 'Export PDF',
+    css: 'btn',
+    run: () => {
+      const root = this.reportRoot()?.nativeElement;
+      if (root) this.exportSvc.exportPDF(this.lines(), root);
     }
-  ]);
+  },
+  {
+    key: 'xlsx',
+    label: 'Export Excel',
+    css: 'btn',
+    run: () => this.exportSvc.exportXLSX(this.lines(), {
+      qty: this.totalQty(),
+      cost: this.totalCost(),
+      gross: this.totalGross(),
+      vat: this.totalVAT(),
+      profit: this.totalProfit()
+    }, this.receipts())
+  },
+  {
+    key: 'csv',
+    label: 'Export CSV',
+    css: 'ghost',
+    run: () => this.exportSvc.exportCSV(this.lines(), {
+      qty: this.totalQty(),
+      cost: this.totalCost(),
+      gross: this.totalGross(),
+      vat: this.totalVAT(),
+      profit: this.totalProfit()
+    }, this.receipts())
+  }
+]);
+
 
   reportRoot = viewChild<ElementRef<HTMLDivElement>>('reportRoot');
 

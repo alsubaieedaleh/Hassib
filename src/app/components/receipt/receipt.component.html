@@ -1,0 +1,40 @@
+ <div class="border rounded-md p-4 bg-white shadow-sm print:p-0 print:shadow-none print:border-none text-sm">
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-lg font-semibold">Receipt</h2>
+    <button class="text-xs bg-teal-600 text-white px-3 py-1 rounded hover:bg-teal-700 print:hidden"
+            (click)="print()">🖨️ Print</button>
+  </div>
+
+  <div class="mb-2">
+    <p><strong>Customer:</strong> {{ phone }}</p>
+    <p><strong>Payment:</strong> {{ payment }}</p>
+  </div>
+
+  <table class="w-full text-left border-t border-b border-gray-300 mb-2">
+    <thead>
+      <tr class="border-b border-gray-200">
+        <th class="py-1">#</th>
+        <th class="py-1">Product</th>
+        <th class="py-1">Qty</th>
+        <th class="py-1">Price</th>
+        <th class="py-1">Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (line of lines(); track line.name) {
+        <tr class="border-b border-dashed">
+          <td class="py-1">{{ $index + 1 }}</td>
+          <td class="py-1">{{ line.name }}</td>
+          <td class="py-1">{{ line.qty }}</td>
+          <td class="py-1">SAR {{ line.price.toFixed(2) }}</td>
+          <td class="py-1">SAR {{ line.grossTotal.toFixed(2) }}</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <div class="text-right font-medium">
+    <p class="mb-1">VAT Included</p>
+    <p class="text-base">Total: SAR {{ total.toFixed(2) }}</p>
+  </div>
+</div>
