@@ -1,0 +1,28 @@
+<div class="container">
+  <header> ... sales ... </header>
+
+  <main class="grid">
+    <section class="card">
+      <product-form (submitted)="addReceipt($event)"></product-form>
+
+      <hr class="my-6" />
+
+      <h2 class="text-xl font-bold">Receipts</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        @for (receipt of receipts(); track $index) {
+          <receipt [lines]="receipt"></receipt>
+        }
+      </div>
+
+      <hr class="my-6" />
+
+      <product-manager></product-manager>
+ 
+      <sale-table [lines]="lines()"></sale-table>
+    </section>
+
+    <aside class="card">
+      <session-summary [lines]="lines()" [receipts]="receipts()"></session-summary>
+    </aside>
+  </main>
+</div>

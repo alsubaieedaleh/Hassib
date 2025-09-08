@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SaleFormComponent } from './sale-form.component';
+import { StoragePage } from './storage-page';
 
-describe('SaleFormComponent', () => {
-  let component: SaleFormComponent;
-  let fixture: ComponentFixture<SaleFormComponent>;
+describe('StoragePage', () => {
+  let component: StoragePage;
+  let fixture: ComponentFixture<StoragePage>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SaleFormComponent]
+      imports: [StoragePage]
     })
     .compileComponents();
-    
-    fixture = TestBed.createComponent(SaleFormComponent);
+
+    fixture = TestBed.createComponent(StoragePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
