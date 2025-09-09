@@ -1,13 +1,15 @@
-import { Component, Signal, signal } from '@angular/core';
+// storage-page.ts
+import { Component, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { InventoryService } from '../../services/inventory-service';
 
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import { ProductManagerComponent } from '../../components/product-manager/product-manager.component';
 import { SaleTableComponent } from '../../components/sale-table/sale-table.component';
+import { StorageSummaryComponent } from '../../components/storage-summary/storage-summary.component';
 
 import { ProductFormValue } from '../../models/product.model';
 import { Line } from '../../models/line.model';
-import { StorageSummaryComponent } from '../../components/storage-summary/storage-summary.component';
 
 @Component({
   selector: 'app-storage-page',
@@ -19,14 +21,12 @@ import { StorageSummaryComponent } from '../../components/storage-summary/storag
     SaleTableComponent,
     StorageSummaryComponent
   ],
-  templateUrl: './storage-page.html',
+  templateUrl: './storage-page.component.html',
   styleUrls: ['./storage-page.scss']
 })
 export class StoragePage {
-  // Estado reactivo
-  lines = signal<Line[]>([]);
+  constructor(public inventory: InventoryService) {}
 
-  // Agregar productos desde el formulario
   addProduct = (productSignal: Signal<{ products: ProductFormValue[] }>) => {
     const { products } = productSignal();
 
@@ -44,10 +44,24 @@ export class StoragePage {
       phone: '',
     }));
 
-    this.lines.update(prev => [...prev, ...newLines]);
+    this.inventory.addProducts(newLines);
   };
 
   private round(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
   }
+  importFile(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  this.inventory.importFromExcel(file).then(count => {
+    alert(`${count} products imported successfully.`);
+  }).catch(err => {
+    alert(`Error importing file: ${err.message || err}`);
+  });
+
+   input.value = '';
+}
+
 }

@@ -1,0 +1,53 @@
+<div class="container">
+
+  <div class="card p-4 mb-6">
+  <h3 class="text-lg font-semibold mb-2">📦 Import Products</h3>
+
+  <label
+    class="inline-block text-sm font-medium text-gray-700 mb-2"
+    for="fileInput"
+  >
+    Select Excel file (.xlsx):
+  </label>
+
+  <input
+    id="fileInput"
+    type="file"
+    accept=".xlsx"
+    (change)="importFile($event)"
+    class="block w-full text-sm file:btn file:btn-primary file:mr-4"
+  />
+
+  <p class="text-xs text-gray-500 mt-2">
+    Expected columns: <code>barcode</code>, <code>name</code>,
+    <code>qty</code>, <code>price</code>, <code>cost</code>
+  </p>
+</div>
+
+  <main class="grid">
+    <section class="card">
+      <product-form
+        [showPayment]="false"
+        [showPhone]="false"
+        [showVAT]="false"
+        [submitLabel]="'Add to Storage'"
+        (submitted)="addProduct($event)"
+      ></product-form>
+
+      <hr class="my-6" />
+
+      <h2 class="text-xl font-bold">Stored Products</h2>
+
+<sale-table [lines]="inventory.products()"></sale-table>
+
+      <hr class="my-6" />
+ 
+      <product-manager></product-manager>
+    </section>
+
+    <aside>
+<storage-summary [lines]="inventory.products()"></storage-summary>
+
+    </aside>
+  </main>
+</div>

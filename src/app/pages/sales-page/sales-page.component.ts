@@ -1,4 +1,4 @@
-import { Component, Signal, signal } from '@angular/core';
+import { Component, Signal, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
@@ -9,6 +9,7 @@ import { ReceiptComponent } from '../../components/receipt/receipt.component';
 
 import { Line, Payment } from '../../models/line.model';
 import { ProductFormValue } from '../../models/product.model';
+import { InventoryService } from '../../services/inventory-service';
 
 @Component({
   selector: 'app-sales-page',
@@ -25,45 +26,48 @@ import { ProductFormValue } from '../../models/product.model';
   styleUrls: ['./sales-page.component.scss']
 })
 export class SalesPage {
-  // 💾 Main data stores
+  private inventory = inject(InventoryService);
+
   lines = signal<Line[]>([]);
   receipts = signal<Line[][]>([]);
 
-  // 💳 Inputs that can be passed down or modified dynamically
   vatRate = signal(15);
-  payment = signal<Payment>('Cash');         // ✅ properly typed signal
+  payment = signal<Payment>('Cash');
   phone = signal<string>('Walk-in');
 
-  // 📦 Add receipt from form values
   addReceipt = (receiptSignal: Signal<{ products: ProductFormValue[]; payment: Payment; phone: string }>) => {
-  const { products, payment, phone } = receiptSignal();  
+    const { products, payment, phone } = receiptSignal();  
 
-  const newLines: Line[] = products.map(p => {
-    const grossTotal = this.round(p.price * p.qty);
-    const vatAmount = this.round(
-      grossTotal * (this.vatRate() / (100 + this.vatRate()))
-    );
-    const profit = this.round(grossTotal - vatAmount - p.cost * p.qty);
+    const newLines: Line[] = products.map(p => {
+      const grossTotal = this.round(p.price * p.qty);
+      const vatAmount = this.round(
+        grossTotal * (this.vatRate() / (100 + this.vatRate()))
+      );
+      const profit = this.round(grossTotal - vatAmount - p.cost * p.qty);
 
-    return {
-      id: 0,
-      barcode: p.barcode,
-      name: p.name,
-      qty: p.qty,
-      price: p.price,
-      cost: p.cost,
-      grossTotal,
-      vatAmount,
-      profit,
-      payment,
-      phone,
-    };
-  });
+      return {
+        id: 0,
+        barcode: p.barcode,
+        name: p.name,
+        qty: p.qty,
+        price: p.price,
+        cost: p.cost,
+        grossTotal,
+        vatAmount,
+        profit,
+        payment,
+        phone,
+      };
+    });
 
-  this.lines.update(prev => [...prev, ...newLines]);
-  this.receipts.update(prev => [...prev, newLines]); // 👈 this will now trigger UI reactivity
-};
+    this.lines.update(prev => [...prev, ...newLines]);
+    this.receipts.update(prev => [...prev, newLines]);
+  };
 
+  // Optional: Lookup a stored product
+  lookupProduct(barcode: string): Line | undefined {
+    return this.inventory.getByBarcode(barcode);
+  }
 
   private round(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;

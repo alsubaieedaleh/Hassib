@@ -2,7 +2,8 @@ import { Component, signal, input, output, WritableSignal, Signal } from '@angul
 import { ProductFormValue } from '../../models/product.model';
 import { Payment } from '../../models/line.model';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule } from 'lucide-angular';
+import { inject } from '@angular/core';
+import { InventoryService } from '../../services/inventory-service';
 
 
 interface ProductSignals {
@@ -20,7 +21,8 @@ interface ProductSignals {
   templateUrl: './product-form.component.html',
 })
 export class ProductFormComponent {
-  // CONFIG SIGNAL INPUTS
+  private inventory = inject(InventoryService);
+
   showPayment = input<boolean>(true);
   showPhone = input<boolean>(true);
   showVAT = input<boolean>(true);
@@ -50,7 +52,7 @@ productFields = [
       { d: 'M16 4h2v16h-2z' },
     ],
     getter: (f: ProductSignals) => f.barcode(),
-    onInput: (f: ProductSignals, e: Event) => this.onStringInput(f.barcode, e),
+  onInput: (f: ProductSignals, e: Event) => this.onBarcodeInput(f, e),
   },
   {
     key: 'name',
@@ -128,6 +130,17 @@ productFields = [
     this.phone.set('');
     this.payment.set('Cash');
   }
+onBarcodeInput(f: ProductSignals, event: Event): void {
+  const value = (event.target as HTMLInputElement).value.trim();
+  f.barcode.set(value);
+
+  const storedProduct = this.inventory.getByBarcode(value);
+  if (storedProduct) {
+    f.name.set(storedProduct.name);
+    f.price.set(storedProduct.price);
+    f.cost.set(storedProduct.cost);
+  }
+}
 
   submit() {
     const products: ProductFormValue[] = this.productForms()
