@@ -1,1 +1,28 @@
-<p>storage-page works!</p>
+<div class="container">
+  <main class="grid">
+    <section class="card">
+      <product-form
+        [showPayment]="false"
+        [showPhone]="false"
+        [showVAT]="false"
+        [submitLabel]="'Add to Storage'"
+        (submitted)="addProduct($event)"
+      ></product-form>
+
+      <hr class="my-6" />
+
+      <h2 class="text-xl font-bold">Stored Products</h2>
+
+      <sale-table [lines]="lines()"></sale-table>
+
+      <hr class="my-6" />
+
+      <product-manager></product-manager>
+    </section>
+
+    <aside>
+        <storage-summary [lines]="lines()"></storage-summary>
+
+    </aside>
+  </main>
+</div>

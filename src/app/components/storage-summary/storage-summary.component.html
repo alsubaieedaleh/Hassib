@@ -1,0 +1,20 @@
+<div class="card" #reportRoot>
+  <h2 class="text-xl font-bold mb-4">Storage Summary</h2>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+    @for (metric of metrics(); track metric.label) {
+      <div class="flex justify-between text-sm border p-2 rounded">
+        <span>{{ metric.label }}</span>
+        <span class="font-semibold">{{ metric.value() }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="flex gap-2 mt-4">
+    @for (action of actions(); track action.key) {
+      <button type="button" class="{{ action.css }}" (click)="action.run()">
+        {{ action.label }}
+      </button>
+    }
+  </div>
+</div>
