@@ -1,1 +1,223 @@
-<p>landing-page works!</p>
+<div class="container">
+  <!-- Hero -->
+  <section class="card hero">
+    <div class="hero-body">
+      <div>
+        <h1 class="title">Welcome to POS & Inventory Hub</h1>
+        <p class="subtitle">
+          Fast tools for cashiers, clear insights for accountants — all in one place.
+        </p>
+
+        <div class="cta">
+          <a routerLink="/sales" class="btn primary">Open Sales</a>
+          <a routerLink="/storage" class="btn">Manage Storage</a>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        @for (kpi of kpis(); track kpi.label) {
+          <div class="kpi">
+            <div class="kpi-label">{{ kpi.label }}</div>
+            <div class="kpi-value">{{ kpi.value() }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Grid -->
+  <main class="grid tools">
+    <!-- VAT Calculator -->
+    <section class="card">
+      <h2 class="card-title">VAT Calculator</h2>
+      <p class="muted">Convert between Net and Gross including/excluding VAT.</p>
+
+      <div class="form-row">
+        <label>Mode</label>
+        <div class="segmented">
+          <button type="button"
+                  [class.active]="mode()==='net'"
+                  (click)="setMode('net')">
+            Net → Gross
+          </button>
+          <button type="button"
+                  [class.active]="mode()==='gross'"
+                  (click)="setMode('gross')">
+            Gross → Net
+          </button>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label>Amount</label>
+        <input type="number" min="0" step="0.01"
+               [value]="amount()"
+               (input)="amount.set(num($event))" />
+
+        <label>VAT %</label>
+        <input type="number" min="0" step="0.1"
+               [value]="vatRate()"
+               (input)="vatRate.set(num($event))" />
+      </div>
+
+      <div class="results">
+        @for (r of vatResults(); track r.label) {
+          <div class="result-item">
+            <div class="result-label">{{ r.label }}</div>
+            <div class="result-value">{{ r.value() }}</div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Change Helper -->
+    <section class="card">
+      <h2 class="card-title">Change Helper</h2>
+      <p class="muted">Quickly compute the customer’s change and notes breakdown.</p>
+
+      <div class="form-grid">
+        <label>Amount Due</label>
+        <input type="number" min="0" step="0.01"
+               [value]="due()"
+               (input)="due.set(num($event))" />
+
+        <label>Amount Paid</label>
+        <input type="number" min="0" step="0.01"
+               [value]="paid()"
+               (input)="paid.set(num($event))" />
+      </div>
+
+      <div class="results two">
+        <div class="result-item big">
+          <div class="result-label">Change</div>
+          <div class="result-value">SAR {{ change().toFixed(2) }}</div>
+        </div>
+      </div>
+
+      <div class="breakdown">
+        @for (b of changeBreakdown(); track $index) {
+          <div class="chip">
+            {{ b.count }} × {{ b.denom }}
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Margin / Markup -->
+    <section class="card">
+      <h2 class="card-title">Margin & Markup</h2>
+      <p class="muted">Check profitability instantly.</p>
+
+      <div class="form-grid">
+        <label>Cost (SAR)</label>
+        <input type="number" min="0" step="0.01"
+               [value]="cost()"
+               (input)="cost.set(num($event))" />
+
+        <label>Price (SAR)</label>
+        <input type="number" min="0" step="0.01"
+               [value]="price()"
+               (input)="price.set(num($event))" />
+      </div>
+
+      <div class="results three">
+        @for (r of marginResults(); track r.label) {
+          <div class="result-item">
+            <div class="result-label">{{ r.label }}</div>
+            <div class="result-value">{{ r.value() }}</div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Split Payments -->
+    <section class="card">
+      <h2 class="card-title">Split Payments</h2>
+      <p class="muted">Distribute a total across payment methods.</p>
+
+      <div class="form-grid">
+        <label>Total (SAR)</label>
+        <input type="number" min="0" step="0.01"
+               [value]="totalToSplit()"
+               (input)="totalToSplit.set(num($event))" />
+
+        <label>Ratios (sum any values)</label>
+        <div class="split-grid">
+          @for (f of splitFields; track f.key) {
+            <div class="split-row">
+              <span>{{ f.label }}</span>
+              <input type="number" min="0" step="1"
+                     [value]="split()[f.key]"
+                     (input)="setSplit(f.key, num($event))" />
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="results two">
+        @for (r of splitResults(); track r.label) {
+          <div class="result-item">
+            <div class="result-label">{{ r.label }}</div>
+            <div class="result-value">{{ r.value() }}</div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- Barcode Lookup (connected to Inventory) -->
+    <section class="card">
+      <h2 class="card-title">Barcode Lookup</h2>
+      <p class="muted">Search a product stored in inventory by barcode.</p>
+
+      <div class="form-row">
+        <label>Barcode</label>
+        <input placeholder="Scan or type barcode..."
+               [value]="queryBarcode()"
+               (input)="onBarcodeInput($event)" />
+      </div>
+
+      @if (foundProduct(); as p) {
+        <div class="lookup">
+          <div class="lookup-row">
+            <div>Barcode</div><div class="muted">{{ p.barcode }}</div>
+          </div>
+          <div class="lookup-row">
+            <div>Name</div><div class="strong">{{ p.name }}</div>
+          </div>
+          <div class="lookup-row">
+            <div>Qty</div><div>{{ p.qty }}</div>
+          </div>
+          <div class="lookup-row">
+            <div>Cost</div><div>SAR {{ p.cost.toFixed(2) }}</div>
+          </div>
+          <div class="lookup-row">
+            <div>Price</div><div class="strong">SAR {{ p.price.toFixed(2) }}</div>
+          </div>
+
+          <div class="cta">
+            <a routerLink="/sales" class="btn primary">Sell This Item</a>
+            <a routerLink="/storage" class="btn">Open Storage</a>
+          </div>
+        </div>
+      } @else {
+        <div class="empty">
+          <div>No product selected or not found.</div>
+          <div class="mt-2">
+            <a routerLink="/storage" class="btn ghost">Add to Storage</a>
+          </div>
+        </div>
+      }
+    </section>
+  </main>
+
+  <!-- Quick Links -->
+  <section class="card shortcuts">
+    <h2 class="card-title">Quick Actions</h2>
+    <div class="chips">
+      <a routerLink="/sales" class="chip-link">New Sale</a>
+      <a routerLink="/storage" class="chip-link">Import Inventory</a>
+      <a routerLink="/storage" class="chip-link">Manage Products</a>
+      <a routerLink="/sales" class="chip-link">Session Summary</a>
+    </div>
+  </section>
+</div>
