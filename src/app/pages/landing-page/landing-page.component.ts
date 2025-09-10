@@ -1,8 +1,8 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { InventoryService } from '../../services/inventory-service';
-import { Line } from '../../models/line.model';
+import { InventoryService } from '../../shared/services/inventory-service';
+import { Line } from '../../shared/models/line.model';
 
 type SplitKey = 'Cash' | 'Mada' | 'Credit Card' | 'On Account';
 

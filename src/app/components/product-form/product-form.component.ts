@@ -1,9 +1,9 @@
 import { Component, signal, input, output, WritableSignal, Signal } from '@angular/core';
-import { ProductFormValue } from '../../models/product.model';
-import { Payment } from '../../models/line.model';
+import { ProductFormValue } from '../../shared/models/product.model';
+import { Payment } from '../../shared/models/line.model';
 import { CommonModule } from '@angular/common';
 import { inject } from '@angular/core';
-import { InventoryService } from '../../services/inventory-service';
+import { InventoryService } from '../../shared/services/inventory-service';
 
 
 interface ProductSignals {

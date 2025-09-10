@@ -7,9 +7,9 @@ import { SaleTableComponent } from '../../components/sale-table/sale-table.compo
 import { SessionSummaryComponent } from '../../components/session-summary/session-summary.component';
 import { ReceiptComponent } from '../../components/receipt/receipt.component';
 
-import { Line, Payment } from '../../models/line.model';
-import { ProductFormValue } from '../../models/product.model';
-import { InventoryService } from '../../services/inventory-service';
+import { Line, Payment } from '../../shared/models/line.model';
+import { ProductFormValue } from '../../shared/models/product.model';
+import { InventoryService } from "../../shared/services/inventory-service";
 
 @Component({
   selector: 'app-sales-page',

@@ -1,17 +1,13 @@
 import {
   ApplicationRef,
-  createComponent,
   Injectable,
   Injector,
-  runInInjectionContext
 } from '@angular/core';
 import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
 import * as XLSX from 'xlsx';
-import { Line } from '../models/line.model';
-import { SaleTableComponent } from '../components/sale-table/sale-table.component';
- import autoTable from 'jspdf-autotable'; // ✅ NEW
- @Injectable({ providedIn: 'root' })
+import { Line } from '..//models/line.model';
+import autoTable from 'jspdf-autotable'; // ✅ NEW
+@Injectable({ providedIn: 'root' })
 export class ExportService {
   constructor(private appRef: ApplicationRef, private injector: Injector) { }
 
@@ -20,66 +16,77 @@ export class ExportService {
   }
 
   // ✅ EXPORT PDF (Using SaleTableComponent with Signal Inputs)
- 
-async exportSalesTablePDF(lines: Line[]) {
-  if (!lines.length) {
-    alert('No lines to export.');
-    return;
+
+  async exportSalesTablePDF(lines: Line[]) {
+    if (!lines.length) {
+      alert('No lines to export.');
+      return;
+    }
+
+    const doc = new jsPDF('landscape');
+
+    // ✅ Table Header
+    const headers = [[
+      '#', 'Barcode', 'Product', 'Qty', 'Cost', 'Sell (Gross)', 'VAT (15% incl)',
+      'Net Profit', 'Payment', 'Phone'
+    ]];
+
+    // ✅ Table Body
+    const rows = lines.map((line, index) => ([
+      index + 1,
+      line.barcode || '',
+      line.name,
+      line.qty,
+      `SAR ${line.cost.toFixed(2)}`,
+      `SAR ${line.grossTotal.toFixed(2)}`,
+      `SAR ${line.vatAmount.toFixed(2)}`,
+      `SAR ${line.profit.toFixed(2)}`,
+      line.payment,
+      line.phone || ''
+    ]));
+
+    // ✅ Render table
+    autoTable(doc, {
+      head: headers,
+      body: rows,
+      startY: 20,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [0, 123, 255] }, // Optional: Blue header
+      theme: 'grid',
+    });
+
+    // ✅ Summary section
+    const totalQty = lines.reduce((s, l) => s + l.qty, 0);
+    const totalCost = lines.reduce((s, l) => s + l.cost * l.qty, 0);
+    const totalGross = lines.reduce((s, l) => s + l.grossTotal, 0);
+    const totalVAT = lines.reduce((s, l) => s + l.vatAmount, 0);
+    const totalProfit = lines.reduce((s, l) => s + l.profit, 0);
+
+    const finalY = (doc as any).lastAutoTable.finalY;
+
+    doc.setFontSize(9); // ✅ Smaller font
+
+    const summary = [
+      `Total Qty: ${totalQty}`,
+      `Total Cost: SAR ${totalCost.toFixed(2)}`,
+      `Gross Sales: SAR ${totalGross.toFixed(2)}`,
+      `VAT: SAR ${totalVAT.toFixed(2)}`,
+      `Net Profit: SAR ${totalProfit.toFixed(2)}`
+    ];
+
+    // ✅ Spacing & alignment
+    let x = 15;
+    const y = finalY + 10;
+
+    summary.forEach(text => {
+      doc.text(text, x, y);
+      x += doc.getTextWidth(text) + 20; // space between items
+    });
+
+
+    // ✅ Save PDF
+    doc.save('sales_table.pdf');
   }
-
-  const doc = new jsPDF('landscape');
-
-  // ✅ Table Header
-  const headers = [[
-    '#', 'Barcode', 'Product', 'Qty', 'Cost', 'Sell (Gross)', 'VAT (15% incl)',
-    'Net Profit', 'Payment', 'Phone'
-  ]];
-
-  // ✅ Table Body
-  const rows = lines.map((line, index) => ([
-    index + 1,
-    line.barcode || '',
-    line.name,
-    line.qty,
-    `SAR ${line.cost.toFixed(2)}`,
-    `SAR ${line.grossTotal.toFixed(2)}`,
-    `SAR ${line.vatAmount.toFixed(2)}`,
-    `SAR ${line.profit.toFixed(2)}`,
-    line.payment,
-    line.phone || ''
-  ]));
-
-  // ✅ Render table
-  autoTable(doc, {
-    head: headers,
-    body: rows,
-    startY: 20,
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [0, 123, 255] }, // Optional: Blue header
-    theme: 'grid',
-  });
-
-  // ✅ Summary section
-  const totalQty = lines.reduce((s, l) => s + l.qty, 0);
-  const totalCost = lines.reduce((s, l) => s + l.cost * l.qty, 0);
-  const totalGross = lines.reduce((s, l) => s + l.grossTotal, 0);
-  const totalVAT = lines.reduce((s, l) => s + l.vatAmount, 0);
-  const totalProfit = lines.reduce((s, l) => s + l.profit, 0);
-
-  const summaryText = `
-Total Qty: ${totalQty}
-Total Cost: SAR ${totalCost.toFixed(2)}
-Total Gross: SAR ${totalGross.toFixed(2)}
-Total VAT: SAR ${totalVAT.toFixed(2)}
-Net Profit: SAR ${totalProfit.toFixed(2)}
-  `.trim();
-
-const finalY = (doc as any).lastAutoTable.finalY;
-doc.text(summaryText, 15, finalY + 10);
-
-  // ✅ Save PDF
-  doc.save('sales_table.pdf');
-}
 
 
 

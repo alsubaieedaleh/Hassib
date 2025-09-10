@@ -9,7 +9,7 @@ import {
   runInInjectionContext,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Line } from '../../models/line.model';
+import { Line } from '../../shared/models/line.model';
 
 interface Column {
   key: string;

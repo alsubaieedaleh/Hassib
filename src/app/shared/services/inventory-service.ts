@@ -1,6 +1,6 @@
 // inventory.service.ts
 import { Injectable, Signal, signal } from '@angular/core';
-import { Line } from '../models/line.model';
+import { Line } from '..//models/line.model';
 import * as XLSX from 'xlsx';
 
 @Injectable({ providedIn: 'root' })

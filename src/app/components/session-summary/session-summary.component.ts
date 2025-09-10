@@ -1,7 +1,7 @@
 import { Component, input, computed, viewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Line } from '../../models/line.model';
-import { ExportService } from '../../services/export.service';
+import { Line } from '../../shared/models/line.model';
+import { ExportService } from '../../shared/services/export.service';
 
 type Metric = { label: string; value: () => string };
 type Action = { key: 'pdf' | 'xlsx' | 'csv'; label: string; css: string; run: () => void };

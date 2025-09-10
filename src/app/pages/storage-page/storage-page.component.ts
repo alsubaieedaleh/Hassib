@@ -1,15 +1,16 @@
-// storage-page.ts
+ 
 import { Component, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { InventoryService } from '../../services/inventory-service';
+import { InventoryService } from '../../shared/services/inventory-service';
 
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import { ProductManagerComponent } from '../../components/product-manager/product-manager.component';
 import { SaleTableComponent } from '../../components/sale-table/sale-table.component';
 import { StorageSummaryComponent } from '../../components/storage-summary/storage-summary.component';
 
-import { ProductFormValue } from '../../models/product.model';
-import { Line } from '../../models/line.model';
+import { ProductFormValue } from '../../shared/models/product.model';
+import { Line } from '../../shared/models/line.model';
+import { ImportProductsComponent } from '../../components/import-products/import-products.component/import-products.component';
 
 @Component({
   selector: 'app-storage-page',
@@ -19,7 +20,8 @@ import { Line } from '../../models/line.model';
     ProductFormComponent,
     ProductManagerComponent,
     SaleTableComponent,
-    StorageSummaryComponent
+    StorageSummaryComponent,
+    ImportProductsComponent 
   ],
   templateUrl: './storage-page.component.html',
   styleUrls: ['./storage-page.scss']
@@ -50,18 +52,5 @@ export class StoragePage {
   private round(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
   }
-  importFile(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-
-  this.inventory.importFromExcel(file).then(count => {
-    alert(`${count} products imported successfully.`);
-  }).catch(err => {
-    alert(`Error importing file: ${err.message || err}`);
-  });
-
-   input.value = '';
-}
-
+ 
 }
