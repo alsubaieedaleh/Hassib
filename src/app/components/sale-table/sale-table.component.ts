@@ -1,4 +1,13 @@
-import { Component, input, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  computed,
+  WritableSignal,
+  signal,
+  effect,
+  Injector,
+  runInInjectionContext,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Line } from '../../models/line.model';
 
@@ -13,11 +22,42 @@ interface Column {
   selector: 'sale-table',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './sale-table.component.html'
+  templateUrl: './sale-table.component.html',
 })
 export class SaleTableComponent {
-  lines = input<Line[]>([]);
+  /**
+   * ✅ Signal Input used by Angular's binding system
+   * Do NOT change or remove.
+   */
+  readonly linesInput = input<Line[]>([]);
 
+  /**
+   * ✅ Writable internal signal used by the template
+   * Allows both Angular-bound and dynamic (external) updates.
+   */
+  readonly lines = signal<Line[]>([]);
+
+  constructor() {
+    // Sync Angular input() signal to internal signal when used via template
+    effect(() => {
+      this.lines.set(this.linesInput());
+    });
+  }
+
+  /**
+   * ✅ Public setter for programmatic assignment (e.g., PDF export)
+   * Must be called inside a runInInjectionContext()
+   */
+public setLinesExternally(lines: Line[], injector: Injector) {
+  runInInjectionContext(injector, () => {
+    this.lines.set(lines); // ✅ Use the internal signal directly here
+  });
+}
+
+
+  /**
+   * ✅ Table column configuration
+   */
   columns: Column[] = [
     { key: 'index', label: '#', format: (_, i) => String(i + 1) },
     { key: 'barcode', label: 'Barcode', format: ln => ln.barcode },
@@ -31,22 +71,30 @@ export class SaleTableComponent {
     { key: 'phone', label: 'Phone', format: ln => ln.phone }
   ];
 
+  /**
+   * ✅ Computed totals
+   */
   totalQty = computed(() => this.lines().reduce((s, l) => s + l.qty, 0));
-  totalCost = computed(() => this.lines().reduce((s, l) => s + (l.cost * l.qty), 0));
+  totalCost = computed(() => this.lines().reduce((s, l) => s + l.cost * l.qty, 0));
   totalGross = computed(() => this.lines().reduce((s, l) => s + l.grossTotal, 0));
   totalVAT = computed(() => this.lines().reduce((s, l) => s + l.vatAmount, 0));
   totalProfit = computed(() => this.lines().reduce((s, l) => s + l.profit, 0));
 
+  /**
+   * ✅ Payment breakdown (computed map and formatted string)
+   */
   paymentBreakdown = computed(() => {
     const map: Record<string, number> = {};
-    this.lines().forEach(l => map[l.payment] = (map[l.payment] || 0) + l.grossTotal);
+    this.lines().forEach(line => {
+      map[line.payment] = (map[line.payment] || 0) + line.grossTotal;
+    });
     return map;
   });
 
   paymentBreakdownText = computed(() => {
     const entries = Object.entries(this.paymentBreakdown());
     return entries.length
-      ? entries.map(([k, v]) => `${k}: SAR ${v.toFixed(2)}`).join(' | ')
+      ? entries.map(([method, amount]) => `${method}: SAR ${amount.toFixed(2)}`).join(' | ')
       : '—';
   });
 }

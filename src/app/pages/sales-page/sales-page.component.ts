@@ -34,7 +34,7 @@ export class SalesPage {
   vatRate = signal(15);
   payment = signal<Payment>('Cash');
   phone = signal<string>('Walk-in');
-
+ 
   addReceipt = (receiptSignal: Signal<{ products: ProductFormValue[]; payment: Payment; phone: string }>) => {
     const { products, payment, phone } = receiptSignal();  
 

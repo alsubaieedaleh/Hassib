@@ -27,7 +27,7 @@ export class ProductFormComponent {
   showPhone = input<boolean>(true);
   showVAT = input<boolean>(true);
   fixedVATRate = input<number>(15);
-  submitLabel = input<string>('Submit');
+  submitLabel = input<string>('Sell');
 
   // OUTPUT SIGNAL
   submitted = output<Signal<{ products: ProductFormValue[]; payment: Payment; phone: string }>>();
