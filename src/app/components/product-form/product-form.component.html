@@ -1,5 +1,5 @@
 <!-- 🌟 PRODUCT FORMS SECTION -->
-<div class="space-y-6">
+<div class="w-full max-w-screen-lg mx-auto px-4 space-y-6">
   <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
     <svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <path d="M3 12l2-2 4 4 8-8 4 4-12 12z" />
@@ -8,139 +8,127 @@
   </h2>
 
   @for (form of productForms(); track $index) {
-  <div class="rounded-xl border border-gray-200 p-6 bg-white shadow-sm space-y-4 relative">
+    <div class="relative rounded-xl border border-gray-200 p-4 sm:p-6 bg-white shadow-sm space-y-4 overflow-hidden">
 
-    @if (productForms().length > 1) {
-    <button class="absolute top-2 right-2 text-red-500 hover:text-red-600 p-1 rounded-full transition"
-      (click)="removeProduct($index)" aria-label="Remove product">
-      <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M18 6L6 18" stroke-linecap="round" />
-        <path d="M6 6l12 12" stroke-linecap="round" />
-      </svg>
-    </button>
-    }
-
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-      @for (field of productFields; track field.key) {
-      <div class="relative">
-        <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
-        <div class="relative w-full">
-          <!-- Left Icon -->
-          <!-- <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              @for (icon of field.icon; track icon.d) {
-              <path [attr.d]="icon.d" />
-              }
-            </svg>
-          </div> -->
-
-          <!-- Input Field with left padding -->
-          <input [type]="field.type"
-            class="block w-full rounded-md border border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 text-sm pl-10 pr-3 py-2"
-            [attr.placeholder]="field.placeholder" [value]="field.getter(form)" [step]="field.step" [min]="field.min"
-            (input)="field.onInput(form, $event)" />
-        </div>
-
-
-      </div>
+      @if (productForms().length > 1) {
+        <button
+          class="absolute top-2 right-2 text-red-500 hover:text-red-600 p-1 rounded-full transition"
+          (click)="removeProduct($index)" aria-label="Remove product">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18" stroke-linecap="round" />
+            <path d="M6 6l12 12" stroke-linecap="round" />
+          </svg>
+        </button>
       }
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        @for (field of productFields; track field.key) {
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">{{ field.label }}</label>
+            <input
+              [type]="field.type"
+              class="block w-full rounded-md border border-gray-300 shadow-sm focus:ring-green-500 focus:border-green-500 text-sm px-3 py-2"
+              [attr.placeholder]="field.placeholder"
+              [value]="field.getter(form)"
+              [step]="field.step"
+              [min]="field.min"
+              (input)="field.onInput(form, $event)"
+            />
+          </div>
+        }
+      </div>
     </div>
-  </div>
   }
 
-  <button class="text-sm text-green-600 hover:text-green-800 flex items-center gap-1 mt-1" (click)="addProduct()">
+  <!-- Add Product Button -->
+  <button
+    class="text-sm text-green-600 hover:text-green-800 flex items-center gap-1 mt-1"
+    (click)="addProduct()"
+  >
     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <path d="M12 5v14M5 12h14" />
     </svg>
     Add another product
   </button>
-</div>
 
-<hr class="my-6 border-gray-200" />
+  <hr class="my-6 border-gray-200" />
 
-<!-- 🧾 SALE METADATA SECTION -->
-<div class="space-y-4">
-  <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
-    <svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 6v6l4 2" />
-    </svg>
-    Sale Details
-  </h2>
+  <!-- 🧾 SALE METADATA SECTION -->
+  <div class="space-y-4">
+    <h2 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+      <svg class="w-5 h-5 text-green-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+      Sale Details
+    </h2>
 
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-    @if (showVAT()) {
-    <div class="relative">
-      <label class="block text-sm font-medium text-gray-700 mb-1">VAT (%)</label>
-      <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <!-- <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M8 12h8M12 8v8" />
-          </svg> -->
-        </span>
-        <input type="number" readonly class="input bg-gray-100 cursor-not-allowed pl-10" placeholder="VAT Rate"
-          [value]="fixedVATRate()" />
-      </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      @if (showVAT()) {
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">VAT (%)</label>
+          <input
+            type="number"
+            readonly
+            class="block w-full bg-gray-100 text-sm rounded-md border border-gray-300 px-3 py-2 cursor-not-allowed"
+            placeholder="VAT Rate"
+            [value]="fixedVATRate()"
+          />
+        </div>
+      }
+
+      @if (showPayment()) {
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Payment Type</label>
+          <select
+            class="block w-full rounded-md border border-gray-300 shadow-sm text-sm px-3 py-2"
+            [value]="payment()"
+            (change)="onPaymentChange($event)"
+          >
+            @for (opt of paymentOptions; track opt) {
+              <option [value]="opt">{{ opt }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      @if (showPhone()) {
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Customer Phone</label>
+          <input
+            type="text"
+            class="block w-full rounded-md border border-gray-300 shadow-sm text-sm px-3 py-2"
+            placeholder="Customer Phone"
+            [value]="phone()"
+            (input)="onPhoneInput($event)"
+          />
+        </div>
+      }
     </div>
-    }
-
-    @if (showPayment()) {
-    <div class="relative">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Payment Type</label>
-      <div class="relative">
-        <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path d="M4 4h16v16H4z" />
-            <path d="M4 10h16" />
-          </svg>
-        </span>
-        <select class="input pl-9" [value]="payment()" (change)="onPaymentChange($event)">
-          @for (opt of paymentOptions; track opt) {
-          <option [value]="opt">{{ opt }}</option>
-          }
-        </select>
-      </div>
-    </div>
-    }
-
-    @if (showPhone()) {
-    <div class="relative">
-      <label class="block text-sm font-medium text-gray-700 mb-1">Customer Phone</label>
-      <div class="relative">
-        <!-- <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path
-              d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 013 4.18 2 2 0 015 2h3a2 2 0 012 1.72c.12.81.34 1.6.64 2.36a2 2 0 01-.45 2.11L9.03 9.03a16 16 0 006 6l1.84-1.84a2 2 0 012.11-.45c.76.3 1.55.52 2.36.64A2 2 0 0122 16.92z" />
-          </svg>
-        </span> -->
-        <input type="text" class="input pl-9" placeholder="Customer Phone" [value]="phone()"
-          (input)="onPhoneInput($event)" />
-      </div>
-    </div>
-    }
   </div>
-</div>
 
-<hr class="my-6 border-gray-200" />
+  <hr class="my-6 border-gray-200" />
 
-<!-- ✅ SUBMIT BUTTONS -->
-<div class="flex flex-wrap gap-4">
-  <button
-    class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded-md shadow transition flex items-center gap-2"
-    (click)="submit()">
-    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M5 13l4 4L19 7" />
-    </svg>
-    {{ submitLabel() }}
-  </button>
+  <!-- ✅ SUBMIT BUTTONS -->
+  <div class="flex flex-col sm:flex-row gap-3">
+    <button
+      class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white text-sm font-medium px-5 py-2 rounded-md shadow flex items-center justify-center gap-2 transition"
+      (click)="submit()"
+    >
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M5 13l4 4L19 7" />
+      </svg>
+      {{ submitLabel() }}
+    </button>
 
-  <button
-    class="bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-5 py-2 rounded-md shadow transition flex items-center gap-2"
-    (click)="clear()">
-    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path d="M3 6h18M9 6v12M15 6v12" />
-    </svg>
-    Clear
-  </button>
+    <button
+      class="w-full sm:w-auto bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium px-5 py-2 rounded-md shadow flex items-center justify-center gap-2 transition"
+      (click)="clear()"
+    >
+      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M3 6h18M9 6v12M15 6v12" />
+      </svg>
+      Clear
+    </button>
+  </div>
 </div>

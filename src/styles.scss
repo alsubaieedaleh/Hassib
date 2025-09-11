@@ -76,4 +76,8 @@ tfoot td{font-weight:700}
 .pay-list{margin-top:8px;display:flex;flex-direction:column;gap:6px}
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+ 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}

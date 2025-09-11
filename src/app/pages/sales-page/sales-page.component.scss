@@ -1,0 +1,132 @@
+/* Enhanced mobile responsiveness styles - Add to your global CSS */
+
+/* Print optimizations */
+@media print {
+  .print\:hidden { 
+    display: none !important; 
+  }
+  
+  .print\:p-0 { 
+    padding: 0 !important; 
+  }
+  
+  .print\:shadow-none { 
+    box-shadow: none !important; 
+  }
+  
+  .print\:border-none { 
+    border: none !important; 
+  }
+  
+  .print\:mb-2 {
+    margin-bottom: 0.5rem !important;
+  }
+  
+  .print\:bg-transparent {
+    background-color: transparent !important;
+  }
+  
+  .print\:block {
+    display: block !important;
+  }
+  
+  .print\:flex-row {
+    flex-direction: row !important;
+  }
+  
+  /* Ensure good print layout */
+  body {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
+
+/* Mobile table enhancements */
+@media (max-width: 640px) {
+  /* Ensure horizontal scroll works smoothly */
+  .overflow-x-auto {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  /* Improve touch targets on mobile */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better spacing for mobile cards */
+  .mobile-card {
+    margin-bottom: 1rem;
+  }
+}
+
+/* Improved file input styling for all browsers */
+input[type="file"] {
+  width: 100%;
+}
+
+input[type="file"]::-webkit-file-upload-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background-color: #0d9488;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+input[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #0f766e;
+}
+
+/* Smooth transitions for interactive elements */
+.transition-colors {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Focus styles for accessibility */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.5);
+  outline: none;
+}
+
+.focus\:border-teal-500:focus {
+  border-color: #14b8a6;
+}
+
+/* Truncate text helper */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ensure proper spacing in flex layouts */
+.space-y-3 > * + * {
+  margin-top: 0.75rem;
+}
+
+.space-y-4 > * + * {
+  margin-top: 1rem;
+}
+
+.space-y-6 > * + * {
+  margin-top: 1.5rem;
+}
+
+/* Better mobile typography */
+@media (max-width: 640px) {
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.125rem; }
+  
+  /* Ensure readable text size */
+  .text-xs { font-size: 0.75rem; }
+  .text-sm { font-size: 0.875rem; }
+}
