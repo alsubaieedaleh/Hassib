@@ -48,14 +48,18 @@ export class ReceiptComponent {
       vatAmount: this.totalVAT
     });
 
-    const rows = this.lines().map(l => `
-      <tr>
-        <td>${l.name}</td>
-        <td>${l.qty}</td>
-        <td>SAR ${l.price.toFixed(2)}</td>
-        <td>SAR ${l.grossTotal.toFixed(2)}</td>
-      </tr>
-    `).join('');
+    const rows = this.lines().map(l => {
+  const netPrice = l.price / 1.15;
+  const netTotal = netPrice * l.qty;
+  return `
+    <tr>
+      <td>${l.name}</td>
+      <td>${l.qty}</td>
+      <td>SAR ${netPrice.toFixed(2)}</td>
+      <td>SAR ${netTotal.toFixed(2)}</td>
+    </tr>
+  `;
+}).join('');
 
     const html = `
       <div style="font-family: Arial, sans-serif; padding: 16px; max-width: 600px;">

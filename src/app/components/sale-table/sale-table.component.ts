@@ -53,11 +53,7 @@ public setLinesExternally(lines: Line[], injector: Injector) {
     this.lines.set(lines); // ✅ Use the internal signal directly here
   });
 }
-
-
-  /**
-   * ✅ Table column configuration
-   */
+ 
   columns: Column[] = [
     { key: 'index', label: '#', format: (_, i) => String(i + 1) },
     { key: 'barcode', label: 'Barcode', format: ln => ln.barcode },
@@ -71,9 +67,7 @@ public setLinesExternally(lines: Line[], injector: Injector) {
     { key: 'phone', label: 'Phone', format: ln => ln.phone }
   ];
 
-  /**
-   * ✅ Computed totals
-   */
+ 
   totalQty = computed(() => this.lines().reduce((s, l) => s + l.qty, 0));
   totalCost = computed(() => this.lines().reduce((s, l) => s + l.cost * l.qty, 0));
   totalGross = computed(() => this.lines().reduce((s, l) => s + l.grossTotal, 0));
