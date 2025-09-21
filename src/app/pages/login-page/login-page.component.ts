@@ -1,14 +1,32 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './login-page.component.html'
 })
 export class LoginPageComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
+  readonly form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
+    remember: [false],
+  });
+
+  readonly loading = this.auth.loading();
+  readonly authError = this.auth.error();
+  readonly configurationError = this.auth.configurationError();
+  readonly successMessage = signal<string | null>(null);
+
   helpTopics = [
     {
       title: 'Need a workspace?',
@@ -24,7 +42,32 @@ export class LoginPageComponent {
     }
   ];
 
-  preventSubmit(event: Event) {
-    event.preventDefault();
+  get supabaseReady(): boolean {
+    return this.auth.isConfigured();
+  }
+
+  async submit(): Promise<void> {
+    this.successMessage.set(null);
+
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    const { email, password } = this.form.getRawValue();
+
+    if (!email || !password) {
+      return;
+    }
+
+    try {
+      await this.auth.signIn(email, password);
+      this.successMessage.set('Signed in successfully. You can proceed to your dashboard.');
+      // Navigate to the sales workspace for convenience
+      void this.router.navigate(['/sales']);
+    } catch (error) {
+      // Error state already captured by the auth service; nothing else required.
+      console.error('Failed to sign in with Supabase', error);
+    }
   }
 }
