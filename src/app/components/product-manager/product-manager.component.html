@@ -1,3 +1,34 @@
+ 
+<div class="pm-controls">
+  <button class="ghost" type="button" (click)="refreshInventory()" [disabled]="inventory.loading()">
+    Refresh from Supabase
+  </button>
+</div>
+
+@if (inventory.loading()) {
+  <div class="pm-status">Loading inventory from Supabase…</div>
+}
+@if (!inventory.loading() && inventory.error()) {
+  <div class="pm-status error">{{ inventory.error() }}</div>
+}
+
+@for (line of inventory.products(); track line.id) {
+  <div class="prod-chip">
+    <div style="text-align:left">
+      <strong>{{ line.name }}</strong>
+      <div class="small">
+        Barcode: {{ line.barcode || '—' }} • Price: SAR {{ line.price | number:'1.2-2' }} • Qty: {{ line.qty }}
+      </div>
+    </div>
+    <button class="ghost" type="button" (click)="removeProduct(line)" [disabled]="inventory.loading()">
+      Delete
+    </button>
+  </div>
+}
+@if (!inventory.loading() && inventory.products().length === 0) {
+  <div class="small" style="color:var(--muted)">No inventory records found in Supabase.</div>
+}
+ 
 <div class="product-manager">
   @for (p of products(); track $index) {
     <div class="product-manager__item">
@@ -13,3 +44,4 @@
     <p class="product-manager__empty">No saved products on this device.</p>
   }
 </div>
+ 

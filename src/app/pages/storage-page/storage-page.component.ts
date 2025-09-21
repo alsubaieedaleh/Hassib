@@ -29,7 +29,7 @@ import { ImportProductsComponent } from '../../components/import-products/import
 export class StoragePage {
   readonly inventory = inject(InventoryService);
 
-  addProduct = (productSignal: Signal<{ products: ProductFormValue[] }>) => {
+  addProduct = async (productSignal: Signal<{ products: ProductFormValue[] }>) => {
     const { products } = productSignal();
 
     const newLines: Line[] = products.map(p => ({
@@ -40,13 +40,22 @@ export class StoragePage {
       price: p.price,
       cost: p.cost,
       grossTotal: this.round(p.price * p.qty),
-      vatAmount: 0,
+      vatAmount: this.round(p.price * p.qty * 0.15),
       profit: 0,
       payment: 'Cash',
       phone: '',
     }));
 
-    this.inventory.addProducts(newLines);
+    if (!newLines.length) {
+      return;
+    }
+
+    try {
+      await this.inventory.addProducts(newLines);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to add products to Supabase.';
+      alert(message);
+    }
   };
 
   private round(value: number): number {
