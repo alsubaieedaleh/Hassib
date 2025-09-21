@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { Line } from '../../shared/models/line.model';
 import { toQRCodeBase64 } from '../../shared/utils/qrcode-generator.util';  
@@ -18,7 +18,8 @@ export class ReceiptComponent {
   invoiceDate = new Date();
   invoiceUUID = crypto.randomUUID(); // For testing; ZATCA systems assign real UUIDs
 
-  constructor(private date: DatePipe, private currency: CurrencyPipe) {}
+  private readonly date = inject(DatePipe);
+  private readonly currency = inject(CurrencyPipe);
 
   get phone(): string {
     return this.lines()[0]?.phone || 'Walk-in';
