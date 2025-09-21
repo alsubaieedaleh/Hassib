@@ -22,7 +22,7 @@ export class ReceiptComponent {
 
   get phone(): string {
     return this.lines()[0]?.phone || 'Walk-in';
-  } dsfsdafdsff
+  } 
   
   get payment(): string {
     return this.lines()[0]?.payment || '-';
