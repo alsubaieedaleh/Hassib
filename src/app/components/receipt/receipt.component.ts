@@ -90,4 +90,4 @@ export class ReceiptComponent {
     printWindow.print();
   }
 }
-fdsfdsafdasf
+ 
