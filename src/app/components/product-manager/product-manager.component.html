@@ -1,4 +1,5 @@
- 
+ <div>
+
 <div class="pm-controls">
   <button class="ghost" type="button" (click)="refreshInventory()" [disabled]="inventory.loading()">
     Refresh from Supabase
@@ -29,19 +30,6 @@
   <div class="small" style="color:var(--muted)">No inventory records found in Supabase.</div>
 }
  
-<div class="product-manager">
-  @for (p of products(); track $index) {
-    <div class="product-manager__item">
-      <div class="product-manager__details">
-        <span class="product-manager__name">{{ p.name }}</span>
-        <span class="product-manager__meta">Barcode: {{ p.barcode || '—' }} • Price: SAR {{ p.price | number:'1.2-2' }}</span>
-      </div>
-      <button class="btn ghost btn--small" (click)="removeProduct(products().indexOf(p))">Delete</button>
-    </div>
-  }
-
-  @if (products().length === 0) {
-    <p class="product-manager__empty">No saved products on this device.</p>
-  }
+ 
 </div>
  
