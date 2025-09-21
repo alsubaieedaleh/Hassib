@@ -15,20 +15,46 @@
   <div class="mx-auto mt-12 max-w-6xl gap-10 lg:mt-16 lg:grid lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
     <form
       class="rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/60 sm:p-8 lg:p-10"
-      (submit)="preventSubmit($event)"
+      [formGroup]="form"
+      (ngSubmit)="submit()"
       novalidate
     >
+      @if (!supabaseReady) {
+        <div class="mb-4 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
+          <strong>Supabase is not configured.</strong>
+          <span class="block">Add your Supabase keys to the environment files to enable sign up.</span>
+          @if (configurationError()) {
+            <span class="mt-1 block text-amber-600">{{ configurationError() }}</span>
+          }
+        </div>
+      }
+
+      @if (authError()) {
+        <div class="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+          {{ authError() }}
+        </div>
+      }
+
+      @if (successMessage()) {
+        <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          {{ successMessage() }}
+        </div>
+      }
+
       <div class="space-y-6">
         <label class="block space-y-2">
           <span class="text-sm font-semibold text-slate-700">Store name</span>
           <input
             type="text"
-            name="store"
+            formControlName="store"
             class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 shadow-inner focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-200"
             placeholder="Riyadh Flagship"
             autocomplete="organization"
             required
           />
+          @if (form.get('store')?.touched && form.get('store')?.invalid) {
+            <span class="text-xs text-rose-600">Store name is required.</span>
+          }
         </label>
 
         <div class="grid gap-6 sm:grid-cols-2">
@@ -36,18 +62,21 @@
             <span class="text-sm font-semibold text-slate-700">Work email</span>
             <input
               type="email"
-              name="email"
+              formControlName="email"
               class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 shadow-inner focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-200"
               placeholder="you@brand.com"
               autocomplete="email"
               required
             />
+            @if (form.get('email')?.touched && form.get('email')?.invalid) {
+              <span class="text-xs text-rose-600">Enter a valid email address.</span>
+            }
           </label>
           <label class="block space-y-2">
             <span class="text-sm font-semibold text-slate-700">Phone number</span>
             <input
               type="tel"
-              name="phone"
+              formControlName="phone"
               class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 shadow-inner focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-200"
               placeholder="05X XXX XXXX"
               autocomplete="tel"
@@ -59,18 +88,21 @@
           <span class="text-sm font-semibold text-slate-700">Password</span>
           <input
             type="password"
-            name="password"
+            formControlName="password"
             class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 shadow-inner focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-200"
             placeholder="Create a strong password"
             autocomplete="new-password"
             required
           />
+          @if (form.get('password')?.touched && form.get('password')?.invalid) {
+            <span class="text-xs text-rose-600">Password must be at least 6 characters long.</span>
+          }
         </label>
 
         <label class="block space-y-2">
           <span class="text-sm font-semibold text-slate-700">Team size</span>
           <select
-            name="team-size"
+            formControlName="teamSize"
             class="w-full appearance-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 shadow-inner focus:border-teal-500 focus:outline-none focus:ring-4 focus:ring-teal-200"
           >
             <option value="1-5">1 - 5 people</option>
@@ -85,16 +117,19 @@
           <div class="mt-4 grid gap-3 sm:grid-cols-3">
             @for (plan of plans; track plan.name) {
               <label class="flex cursor-pointer flex-col gap-2 rounded-2xl border border-transparent bg-white p-4 text-left shadow-sm transition hover:border-teal-200 hover:shadow-md">
-                <input type="radio" name="plan" [value]="plan.name" class="sr-only" />
+                <input type="radio" formControlName="plan" [value]="plan.name" class="sr-only" />
                 <span class="text-base font-semibold text-slate-900">{{ plan.name }}</span>
                 <span class="text-sm text-slate-600">{{ plan.detail }}</span>
               </label>
             }
           </div>
+          @if (form.get('plan')?.touched && form.get('plan')?.invalid) {
+            <span class="mt-3 block text-xs text-rose-600">Choose one of the launch plans.</span>
+          }
         </fieldset>
 
         <label class="flex items-start gap-3 text-sm text-slate-600">
-          <input type="checkbox" name="terms" required class="mt-1 h-4 w-4 rounded border-slate-300 text-teal-800 focus:ring-teal-500" />
+          <input type="checkbox" formControlName="terms" required class="mt-1 h-4 w-4 rounded border-slate-300 text-teal-800 focus:ring-teal-500" />
           <span>
             I agree to the
             <a routerLink="/terms" class="font-semibold text-teal-800 hover:text-teal-700">Terms of Service</a>
@@ -106,9 +141,13 @@
         <button
           type="submit"
           class="inline-flex w-full items-center justify-center rounded-full bg-teal-800 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-teal-800/30 transition hover:bg-teal-700"
-          disabled
+          [disabled]="!supabaseReady || form.invalid || loading()"
         >
-          Create my account
+          @if (loading()) {
+            <span>Creating account…</span>
+          } @else {
+            <span>Create my account</span>
+          }
         </button>
         <p class="text-center text-sm text-slate-600">
           Already have access?

@@ -10,6 +10,7 @@ import { ReceiptComponent } from '../../components/receipt/receipt.component';
 import { Line, Payment } from '../../shared/models/line.model';
 import { ProductFormValue } from '../../shared/models/product.model';
 import { InventoryService } from "../../shared/services/inventory-service";
+import { SalesService } from "../../shared/services/sales.service";
 
 @Component({
   selector: 'app-sales-page',
@@ -27,6 +28,7 @@ import { InventoryService } from "../../shared/services/inventory-service";
 })
 export class SalesPage {
   private inventory = inject(InventoryService);
+  private readonly sales = inject(SalesService);
 
   lines = signal<Line[]>([]);
   receipts = signal<Line[][]>([]);
@@ -62,6 +64,8 @@ export class SalesPage {
 
     this.lines.update(prev => [...prev, ...newLines]);
     this.receipts.update(prev => [...prev, newLines]);
+
+    void this.persistSales(newLines);
   };
 
   // Optional: Lookup a stored product
@@ -71,5 +75,15 @@ export class SalesPage {
 
   private round(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
+  }
+
+  private async persistSales(lines: Line[]): Promise<void> {
+    try {
+      await this.sales.recordLines(lines);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to record sale in Supabase.';
+      console.error(message, error);
+      alert(message);
+    }
   }
 }
