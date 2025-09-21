@@ -21,7 +21,7 @@ type InventoryRow = {
     id: number;
     name: string | null;
     code: string | null;
-  } | null;
+  }[] | null;
 };
 
 type MovementInsert = {
@@ -352,7 +352,7 @@ export class InventoryService {
   }
 
   private mapRowToLine(row: InventoryRow): Line {
-    const location = row.storage_locations ?? null;
+    const location = row.storage_locations?.[0] ?? null;
 
     return {
       id: Number(row.id) || 0,
