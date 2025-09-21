@@ -1,32 +1,51 @@
-<div class="container">
- 
+<div class="page-container sales-page">
+  <header class="page-header">
+    <span class="section-eyebrow">Sales</span>
+    <h1 class="section-title">Point of sale workspace</h1>
+    <p class="section-subtitle">
+      Capture line items, generate receipts, and export summaries without leaving the counter.
+      Designed for quick keyboard entry and responsive touch layouts.
+    </p>
+  </header>
 
-  <main class="grid">
-    <section class="card min-w-[40px]">
+  <div class="workspace-grid">
+    <section class="card workspace-main">
       <product-form (submitted)="addReceipt($event)"></product-form>
 
-      <hr class="my-6" />
+      <div class="section-divider"></div>
 
-      <h2 class="text-xl font-bold">Receipts</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="module-header">
+        <h2>Receipts</h2>
+        <p class="muted">Each submission becomes a printable mini receipt and feeds the summary.</p>
+      </div>
+
+      <div class="receipt-grid">
         @for (receipt of receipts(); track $index) {
           <receipt [lines]="receipt"></receipt>
         }
       </div>
 
-      <hr class="my-6" />
+      <div class="section-divider"></div>
 
+      <div class="module-header">
+        <h2>Product catalogue</h2>
+        <p class="muted">Maintain reusable product templates and pricing presets.</p>
+      </div>
       <product-manager></product-manager>
- 
-      <sale-table [linesInput]="lines()"></sale-table>
+
+      <div class="section-divider"></div>
+
+      <div class="module-header">
+        <h2>Session lines</h2>
+        <p class="muted">Live record of every product sold during the current session.</p>
+      </div>
+      <div class="table-wrapper">
+        <sale-table [linesInput]="lines()"></sale-table>
+      </div>
     </section>
 
-    <aside class="card">
+    <aside class="card workspace-aside">
       <session-summary [lines]="lines()" [receipts]="receipts()"></session-summary>
     </aside>
-  </main>
+  </div>
 </div>
-
-
-
-<!-- // when the barcode is not compleete the product should not appear and form should be empty -->

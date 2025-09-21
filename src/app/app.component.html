@@ -1,5 +1,14 @@
-<div class="overflow-x-hidden">
-<app-nav></app-nav> 
-<router-outlet></router-outlet>
+<div class="app-shell">
+  <app-nav></app-nav>
 
+  <main class="app-main" role="main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <footer class="app-footer" role="contentinfo">
+    <div class="footer-inner">
+      <span class="footer-brand">Hassib POS Suite</span>
+      <span class="footer-copy">Built for fast retail operations and accurate inventory.</span>
+    </div>
+  </footer>
 </div>
