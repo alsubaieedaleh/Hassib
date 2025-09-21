@@ -14,8 +14,7 @@ type SplitField = { key: SplitKey; label: string };
   selector: 'app-landing-page',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './landing-page.component.html',
-  styleUrls: ['./landing-page.component.scss']
+  templateUrl: './landing-page.component.html'
 })
 export class LandingPage {
   // --- Shared Inventory ---
