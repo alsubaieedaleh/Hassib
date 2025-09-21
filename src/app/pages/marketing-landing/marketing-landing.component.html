@@ -1,0 +1,192 @@
+<section class="relative overflow-hidden bg-slate-50">
+  <div class="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-slate-100"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 py-20 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:px-8 lg:py-24">
+    <div class="space-y-8">
+      <span class="inline-flex items-center gap-2 rounded-full bg-teal-50 px-4 py-1 text-sm font-semibold text-teal-800">
+        <span class="h-2 w-2 rounded-full bg-teal-800"></span>
+        Retail OS for the GCC
+      </span>
+      <h1 class="text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+        Transform your point of sale into a connected retail HQ
+      </h1>
+      <p class="max-w-2xl text-lg leading-relaxed text-slate-600">
+        Hassib brings sales, inventory and finance workflows together so your team always knows the next best move.
+        Built on Angular, ready for Supabase, loved by ambitious retailers.
+      </p>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <a
+          routerLink="/sign-up"
+          class="inline-flex w-full items-center justify-center rounded-full bg-teal-800 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white shadow-lg shadow-teal-800/30 transition hover:bg-teal-700 sm:w-auto"
+        >
+          Create your account
+        </a>
+        <a
+          routerLink="/login"
+          class="inline-flex w-full items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-teal-800 shadow-sm transition hover:border-teal-200 hover:text-teal-700 sm:w-auto"
+        >
+          I already use Hassib
+        </a>
+      </div>
+      <p class="text-sm font-medium uppercase tracking-wide text-slate-500">
+        No credit card required • Early adopters get concierge onboarding
+      </p>
+    </div>
+
+    <div class="rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-8 lg:p-10">
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-semibold uppercase tracking-wide text-slate-500">Live sales snapshot</span>
+        <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-600">Preview</span>
+      </div>
+      <ul class="mt-6 grid gap-4 sm:grid-cols-3">
+        <li class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Today</span>
+          <p class="mt-2 text-2xl font-semibold text-slate-900">SAR 18,420</p>
+        </li>
+        <li class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Avg. basket</span>
+          <p class="mt-2 text-2xl font-semibold text-slate-900">SAR 216</p>
+        </li>
+        <li class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Top category</span>
+          <p class="mt-2 text-2xl font-semibold text-slate-900">Home Fragrance</p>
+        </li>
+      </ul>
+      <div class="mt-8 grid grid-cols-5 items-end gap-2 rounded-2xl bg-gradient-to-br from-teal-50 via-white to-slate-50 p-4">
+        <div class="h-28 rounded-full bg-teal-100"></div>
+        <div class="h-36 rounded-full bg-teal-300"></div>
+        <div class="h-20 rounded-full bg-teal-100"></div>
+        <div class="h-40 rounded-full bg-teal-500"></div>
+        <div class="h-32 rounded-full bg-teal-200"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white py-20 px-4 lg:px-8">
+  <div class="mx-auto max-w-5xl text-center">
+    <h2 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Why retail teams choose Hassib</h2>
+    <p class="mt-4 text-lg leading-relaxed text-slate-600">
+      Manage operations from cash reconciliation to inventory forecasting without leaving a single workspace.
+    </p>
+  </div>
+  <div class="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-3">
+    @for (feature of features; track feature.title) {
+      <article class="flex flex-col gap-3 rounded-3xl border border-slate-200 bg-slate-50/80 p-6 text-left shadow-sm">
+        <h3 class="text-xl font-semibold text-slate-900">{{ feature.title }}</h3>
+        <p class="text-sm leading-relaxed text-slate-600">{{ feature.description }}</p>
+      </article>
+    }
+  </div>
+</section>
+
+<section class="bg-slate-900 py-20 px-4 text-white lg:px-8">
+  <div class="mx-auto flex max-w-6xl flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+    <div class="space-y-6">
+      <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Built with modern tooling, ready for Supabase authentication</h2>
+      <p class="text-base leading-relaxed text-slate-200">
+        We engineered Hassib to plug directly into Supabase when you are ready. Authentication, row level security,
+        storage rules—everything is mapped for a smooth integration phase.
+      </p>
+      <ul class="space-y-3 text-sm leading-relaxed text-slate-200">
+        @for (item of highlights; track item) {
+          <li class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/5 p-3">
+            <svg class="mt-0.5 h-4 w-4 text-teal-200" viewBox="0 0 16 16" aria-hidden="true">
+              <path fill="currentColor" d="M6.1 11.5L2.6 8l1.1-1.1 2.4 2.4 6.2-6.2 1.1 1.1z" />
+            </svg>
+            {{ item }}
+          </li>
+        }
+      </ul>
+      <div class="flex flex-col gap-3 pt-4 sm:flex-row sm:items-center">
+        <a
+          routerLink="/app"
+          class="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-teal-800 shadow-lg shadow-black/20 transition hover:bg-slate-100 sm:w-auto"
+        >
+          Explore the live demo
+        </a>
+        <span class="text-xs font-medium uppercase tracking-wide text-slate-300">
+          No setup required, data resets hourly.
+        </span>
+      </div>
+    </div>
+    <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-2xl shadow-black/30">
+      <div class="space-y-6">
+        <h3 class="text-lg font-semibold text-white">Supabase-ready architecture</h3>
+        <p class="text-sm leading-relaxed text-slate-200">
+          Auth routes, database schemas and storage policies align with Supabase defaults so your engineers can connect in
+          days instead of weeks.
+        </p>
+        <div class="grid gap-4 text-sm text-slate-100 sm:grid-cols-2">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p class="font-semibold text-white">Auth scaffolding</p>
+            <p class="mt-1 text-xs text-slate-200">Pre-wired login &amp; sign-up views with social pathways.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p class="font-semibold text-white">Row level security</p>
+            <p class="mt-1 text-xs text-slate-200">Policies mapped to retail roles to keep teams aligned.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p class="font-semibold text-white">Realtime dashboards</p>
+            <p class="mt-1 text-xs text-slate-200">Angular 17 &amp; Material 3 powering responsive charts.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <p class="font-semibold text-white">Offline ready</p>
+            <p class="mt-1 text-xs text-slate-200">PWA baseline with caching tuned for store networks.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-white py-20 px-4 lg:px-8">
+  <div class="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-center">
+    <div class="space-y-4">
+      <h2 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Optimised for discoverability</h2>
+      <p class="text-base leading-relaxed text-slate-600">
+        Structured metadata and fast performance ensure Hassib is easy to find for retailers searching for modern POS
+        options. These SEO enhancements also power deep links into the product.
+      </p>
+    </div>
+    <div class="grid gap-4 sm:grid-cols-3">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50/80 p-5 text-sm text-slate-600">
+        <h3 class="text-base font-semibold text-teal-800">Meta tags</h3>
+        <p class="mt-2 leading-relaxed">Rich OpenGraph &amp; Twitter cards help your store look premium when shared.</p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50/80 p-5 text-sm text-slate-600">
+        <h3 class="text-base font-semibold text-teal-800">Schema.org data</h3>
+        <p class="mt-2 leading-relaxed">Search engines understand Hassib as a platform thanks to JSON-LD markup.</p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50/80 p-5 text-sm text-slate-600">
+        <h3 class="text-base font-semibold text-teal-800">Lightning fast</h3>
+        <p class="mt-2 leading-relaxed">Angular hydration, lazy loaded routes and caching keep the experience crisp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="bg-slate-900 py-20 px-4 text-white lg:px-8">
+  <div class="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
+    <h2 class="text-3xl font-semibold tracking-tight sm:text-4xl">Ready to move faster?</h2>
+    <p class="max-w-3xl text-base leading-relaxed text-slate-200">
+      Join retailers across Riyadh, Jeddah and Dubai who already use Hassib to reconcile stock, manage teams and grow
+      omnichannel revenue.
+    </p>
+    <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+      <a
+        routerLink="/sign-up"
+        class="inline-flex w-full items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-teal-800 shadow-lg shadow-black/20 transition hover:bg-slate-100 sm:w-auto"
+      >
+        Book my onboarding
+      </a>
+      <a
+        routerLink="/login"
+        class="inline-flex w-full items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-white transition hover:border-white hover:bg-white/10 sm:w-auto"
+      >
+        Sign in
+      </a>
+    </div>
+  </div>
+</section>
+
+<script type="application/ld+json" [innerHTML]="schemaMarkup"></script>

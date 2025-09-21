@@ -1,15 +1,10 @@
-import {
-  ApplicationRef,
-  Injectable,
-  Injector,
-} from '@angular/core';
+import { Injectable } from '@angular/core';
 import { jsPDF } from 'jspdf';
 import * as XLSX from 'xlsx';
 import { Line } from '..//models/line.model';
 import autoTable from 'jspdf-autotable'; // ✅ NEW
 @Injectable({ providedIn: 'root' })
 export class ExportService {
-  constructor(private appRef: ApplicationRef, private injector: Injector) { }
 
   private round(v: number) {
     return Math.round((v + Number.EPSILON) * 100) / 100;

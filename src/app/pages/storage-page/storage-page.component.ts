@@ -1,5 +1,5 @@
  
-import { Component, Signal } from '@angular/core';
+import { Component, Signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../shared/services/inventory-service';
 
@@ -27,7 +27,7 @@ import { ImportProductsComponent } from '../../components/import-products/import
   styleUrls: ['./storage-page.scss']
 })
 export class StoragePage {
-  constructor(public inventory: InventoryService) {}
+  readonly inventory = inject(InventoryService);
 
   addProduct = (productSignal: Signal<{ products: ProductFormValue[] }>) => {
     const { products } = productSignal();

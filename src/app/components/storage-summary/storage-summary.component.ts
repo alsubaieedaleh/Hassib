@@ -1,4 +1,4 @@
-import { Component, computed, input, viewChild, ElementRef } from '@angular/core';
+import { Component, computed, input, viewChild, ElementRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Line } from '../../shared/models/line.model';
 import { ExportService } from '../../shared/services/export.service';
@@ -53,5 +53,5 @@ export class StorageSummaryComponent {
 
   reportRoot = viewChild<ElementRef<HTMLDivElement>>('reportRoot');
 
-  constructor(private exportSvc: ExportService) {}
+  private readonly exportSvc = inject(ExportService);
 }
