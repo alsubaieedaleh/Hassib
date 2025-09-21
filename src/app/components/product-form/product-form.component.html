@@ -57,6 +57,36 @@
     </div>
 
     <div class="form-grid form-grid--meta">
+      @if (showLocation()) {
+        <div class="form-field">
+          <label class="form-label">Storage location</label>
+          <div class="flex items-center gap-2">
+            <select
+              class="form-control"
+              [value]="locationId() ?? ''"
+              (change)="onLocationChange($event)"
+            >
+              @if (!locationOptions().length) {
+                <option value="">No locations available</option>
+              } @else {
+                @for (loc of locationOptions(); track loc.id) {
+                  <option [value]="loc.id">{{ loc.name }}</option>
+                }
+              }
+            </select>
+            <button type="button" class="btn ghost" (click)="createLocation()">
+              Add
+            </button>
+          </div>
+          @if (locationLoading()) {
+            <p class="helper">Loading locations…</p>
+          }
+          @if (locationError()) {
+            <p class="helper error">{{ locationError() }}</p>
+          }
+        </div>
+      }
+
       @if (showVAT()) {
         <div class="form-field">
           <label class="form-label">VAT (%)</label>

@@ -1,9 +1,10 @@
-import { Component, signal, input, output, WritableSignal, Signal } from '@angular/core';
+import { Component, Signal, WritableSignal, computed, effect, inject, input, output, signal } from '@angular/core';
 import { ProductFormValue } from '../../shared/models/product.model';
 import { Payment } from '../../shared/models/line.model';
 import { CommonModule } from '@angular/common';
-import { inject } from '@angular/core';
 import { InventoryService } from '../../shared/services/inventory-service';
+import { StorageLocationService } from '../../shared/services/storage-location.service';
+import { StorageLocation } from '../../shared/models/storage-location.model';
 
 
 interface ProductSignals {
@@ -22,22 +23,55 @@ interface ProductSignals {
 })
 export class ProductFormComponent {
   private inventory = inject(InventoryService);
+  private readonly locationService = inject(StorageLocationService);
 
   showPayment = input<boolean>(true);
   showPhone = input<boolean>(true);
   showVAT = input<boolean>(true);
   fixedVATRate = input<number>(15);
   submitLabel = input<string>('Sell');
+  showLocation = input<boolean>(false);
 
   // OUTPUT SIGNAL
-  submitted = output<Signal<{ products: ProductFormValue[]; payment: Payment; phone: string }>>();
+  submitted = output<Signal<{
+    products: ProductFormValue[];
+    payment: Payment;
+    phone: string;
+    locationId: number | null;
+    locationName: string | null;
+  }>>();
 
   // FORM STATE
   productForms = signal<ProductSignals[]>([this.createProductForm()]);
   payment = signal<Payment>('Cash');
   phone = signal<string>('');
+  locationId = signal<number | null>(null);
 
   paymentOptions: Payment[] = ['Cash', 'Mada', 'Credit Card', 'On Account'];
+  readonly locationsSignal = this.locationService.locations();
+  readonly locationLoading = this.locationService.loading();
+  readonly locationError = this.locationService.error();
+
+  locationOptions = computed<StorageLocation[]>(() => this.locationsSignal());
+
+  constructor() {
+    effect(() => {
+      if (!this.showLocation()) {
+        return;
+      }
+
+      const options = this.locationOptions();
+
+      if (!options.length) {
+        void this.locationService.ensureSeedLocation();
+        return;
+      }
+
+      if (this.locationId() == null) {
+        this.locationId.set(options[0]?.id ?? null);
+      }
+    });
+  }
 
 
 productFields = [
@@ -129,18 +163,23 @@ productFields = [
     this.productForms.set([this.createProductForm()]);
     this.phone.set('');
     this.payment.set('Cash');
+    const options = this.locationOptions();
+    this.locationId.set(options.length ? options[0].id : null);
   }
-onBarcodeInput(f: ProductSignals, event: Event): void {
-  const value = (event.target as HTMLInputElement).value.trim();
-  f.barcode.set(value);
+  onBarcodeInput(f: ProductSignals, event: Event): void {
+    const value = (event.target as HTMLInputElement).value.trim();
+    f.barcode.set(value);
 
-  const storedProduct = this.inventory.getByBarcode(value);
-  if (storedProduct) {
-    f.name.set(storedProduct.name);
-    f.price.set(storedProduct.price);
-    f.cost.set(storedProduct.cost);
+    const storedProduct = this.inventory.getByBarcode(value);
+    if (storedProduct) {
+      f.name.set(storedProduct.name);
+      f.price.set(storedProduct.price);
+      f.cost.set(storedProduct.cost);
+      if (this.showLocation()) {
+        this.locationId.set(storedProduct.locationId ?? this.locationId());
+      }
+    }
   }
-}
 
   submit() {
     const products: ProductFormValue[] = this.productForms()
@@ -154,10 +193,13 @@ onBarcodeInput(f: ProductSignals, event: Event): void {
       }));
 
     if (products.length > 0) {
+      const selectedLocation = this.locationOptions().find(loc => loc.id === this.locationId());
       this.submitted.emit(signal({
         products,
         payment: this.payment(),
-        phone: this.phone()
+        phone: this.phone(),
+        locationId: this.locationId(),
+        locationName: selectedLocation?.name ?? null,
       }));
       this.clear();
     } else {
@@ -182,6 +224,35 @@ onBarcodeInput(f: ProductSignals, event: Event): void {
 
   onPaymentChange(ev: Event) {
     this.payment.set((ev.target as HTMLSelectElement).value as Payment);
+  }
+  onLocationChange(ev: Event) {
+    const raw = (ev.target as HTMLSelectElement).value;
+    if (raw === '') {
+      this.locationId.set(null);
+      return;
+    }
+
+    const value = Number(raw);
+    this.locationId.set(Number.isFinite(value) ? value : null);
+  }
+
+  async createLocation(): Promise<void> {
+    if (!this.showLocation()) {
+      return;
+    }
+
+    const name = window.prompt('Storage location name');
+    if (!name) {
+      return;
+    }
+
+    try {
+      const location = await this.locationService.createLocation({ name });
+      this.locationId.set(location.id);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to create storage location.';
+      alert(message);
+    }
   }
   removeProduct(index: number) {
     const forms = this.productForms();
