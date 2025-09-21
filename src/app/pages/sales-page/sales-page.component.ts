@@ -37,10 +37,19 @@ export class SalesPage {
   payment = signal<Payment>('Cash');
   phone = signal<string>('Walk-in');
  
-  addReceipt = (receiptSignal: Signal<{ products: ProductFormValue[]; payment: Payment; phone: string }>) => {
-    const { products, payment, phone } = receiptSignal();  
+  addReceipt = (
+    receiptSignal: Signal<{
+      products: ProductFormValue[];
+      payment: Payment;
+      phone: string;
+      locationId: number | null;
+      locationName: string | null;
+    }>
+  ) => {
+    const { products, payment, phone } = receiptSignal();
 
     const newLines: Line[] = products.map(p => {
+      const storedProduct = p.barcode ? this.inventory.getByBarcode(p.barcode) : undefined;
       const grossTotal = this.round(p.price * p.qty);
       const vatAmount = this.round(
         grossTotal * (this.vatRate() / (100 + this.vatRate()))
@@ -59,13 +68,16 @@ export class SalesPage {
         profit,
         payment,
         phone,
+        inventoryItemId: storedProduct?.id ?? storedProduct?.inventoryItemId ?? null,
+        locationId: storedProduct?.locationId ?? null,
+        locationName: storedProduct?.locationName ?? null,
       };
     });
 
     this.lines.update(prev => [...prev, ...newLines]);
     this.receipts.update(prev => [...prev, newLines]);
 
-    void this.persistSales(newLines);
+    void this.persistSales(newLines, payment, phone);
   };
 
   // Optional: Lookup a stored product
@@ -77,9 +89,14 @@ export class SalesPage {
     return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
-  private async persistSales(lines: Line[]): Promise<void> {
+  private async persistSales(lines: Line[], payment: Payment, phone: string): Promise<void> {
     try {
-      await this.sales.recordLines(lines);
+      const order = await this.sales.recordReceipt({
+        lines,
+        payment,
+        customerPhone: phone,
+      });
+      await this.inventory.recordSale(lines, order);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to record sale in Supabase.';
       console.error(message, error);
