@@ -10,7 +10,8 @@ type Action = { key: 'pdf' | 'xlsx' | 'csv'; label: string; css: string; run: ()
   selector: 'session-summary',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './session-summary.component.html'
+  templateUrl: './session-summary.component.html',
+  styleUrls: ['./session-summary.component.scss']
 })
 export class SessionSummaryComponent {
   lines = input<Line[]>([]);
@@ -38,19 +39,19 @@ export class SessionSummaryComponent {
   });
 
   metrics = computed<Metric[]>(() => [
-    { label: 'Lines', value: () => String(this.lines().length) },
-    { label: 'Total Qty', value: () => String(this.totalQty()) },
-    { label: 'Total Cost', value: () => `SAR ${this.totalCost().toFixed(2)}` },
-    { label: 'Total Sales (Gross)', value: () => `SAR ${this.totalGross().toFixed(2)}` },
-    { label: 'Total VAT', value: () => `SAR ${this.totalVAT().toFixed(2)}` },
-    { label: 'Net Profit', value: () => `SAR ${this.totalProfit().toFixed(2)}` }
+    { label: 'Lines captured', value: () => String(this.lines().length) },
+    { label: 'Total quantity', value: () => String(this.totalQty()) },
+    { label: 'Cost basis', value: () => `SAR ${this.totalCost().toFixed(2)}` },
+    { label: 'Gross sales', value: () => `SAR ${this.totalGross().toFixed(2)}` },
+    { label: 'VAT collected', value: () => `SAR ${this.totalVAT().toFixed(2)}` },
+    { label: 'Net profit', value: () => `SAR ${this.totalProfit().toFixed(2)}` }
   ]);
 
   actions = computed<Action[]>(() => [
     {
       key: 'pdf',
       label: 'Export PDF',
-      css: 'btn',
+      css: 'btn primary',
       run: () => {
         this.exportSvc.exportSalesTablePDF(this.lines());
       }
@@ -71,7 +72,7 @@ export class SessionSummaryComponent {
     {
       key: 'csv',
       label: 'Export CSV',
-      css: 'ghost',
+      css: 'btn ghost',
       run: () => this.exportSvc.exportCSV(this.lines(), {
         qty: this.totalQty(),
         cost: this.totalCost(),

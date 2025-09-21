@@ -1,32 +1,50 @@
-<div class="container   ">
+<div class="page-container storage-page">
+  <header class="page-header">
+    <span class="section-eyebrow">Inventory</span>
+    <h1 class="section-title">Storage control centre</h1>
+    <p class="section-subtitle">
+      Keep product data clean, import spreadsheets in seconds, and synchronise pricing with your
+      sales team from any device.
+    </p>
+  </header>
 
   <app-import-products></app-import-products>
 
-
-  <main class="grid ">
-    <section class="card min-w-[40px]">
+  <div class="workspace-grid">
+    <section class="card workspace-main">
+      <div class="module-header">
+        <h2>Add products</h2>
+        <p class="muted">Capture SKU details and update stock levels instantly.</p>
+      </div>
       <product-form
         [showPayment]="false"
         [showPhone]="false"
         [showVAT]="false"
-        [submitLabel]="'Add to Storage'"
+        [submitLabel]="'Add to storage'"
         (submitted)="addProduct($event)"
       ></product-form>
 
-      <hr class="my-6" />
+      <div class="section-divider"></div>
 
-      <h2 class="text-xl font-bold">Stored Products</h2>
+      <div class="module-header">
+        <h2>Stored items</h2>
+        <p class="muted">Overview of products currently held in inventory.</p>
+      </div>
+      <div class="table-wrapper">
+        <sale-table [linesInput]="inventory.products()"></sale-table>
+      </div>
 
-<sale-table [linesInput]="inventory.products()"></sale-table>
+      <div class="section-divider"></div>
 
-      <hr class="my-6" />
- 
+      <div class="module-header">
+        <h2>Quick editor</h2>
+        <p class="muted">Adjust pricing, costs, or remove products in bulk.</p>
+      </div>
       <product-manager></product-manager>
     </section>
 
-    <aside>
-<storage-summary [lines]="inventory.products()"></storage-summary>
-
+    <aside class="card workspace-aside">
+      <storage-summary [lines]="inventory.products()"></storage-summary>
     </aside>
-  </main>
+  </div>
 </div>
