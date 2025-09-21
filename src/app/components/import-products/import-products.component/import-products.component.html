@@ -17,6 +17,25 @@
     />
   </div>
 
+  <div class="form-field mt-4">
+    <label class="form-label">Destination location</label>
+    <select class="form-control" [value]="selectedLocationId() ?? ''" (change)="onLocationChange($event)">
+      @if (!locationOptions().length) {
+        <option value="">No locations available</option>
+      } @else {
+        @for (loc of locationOptions(); track loc.id) {
+          <option [value]="loc.id">{{ loc.name }}</option>
+        }
+      }
+    </select>
+    @if (locationLoading()) {
+      <p class="form-hint">Loading storage locations…</p>
+    }
+    @if (locationError()) {
+      <p class="form-hint error">{{ locationError() }}</p>
+    }
+  </div>
+
   <p class="form-hint mt-2">
     Expected columns: <code>barcode</code>, <code>name</code>, <code>qty</code>, <code>price</code>, <code>cost</code>
   </p>

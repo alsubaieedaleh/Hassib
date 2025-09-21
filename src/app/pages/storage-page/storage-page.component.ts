@@ -29,8 +29,14 @@ import { ImportProductsComponent } from '../../components/import-products/import
 export class StoragePage {
   readonly inventory = inject(InventoryService);
 
-  addProduct = async (productSignal: Signal<{ products: ProductFormValue[] }>) => {
-    const { products } = productSignal();
+  addProduct = async (
+    productSignal: Signal<{
+      products: ProductFormValue[];
+      locationId: number | null;
+      locationName: string | null;
+    }>
+  ) => {
+    const { products, locationId, locationName } = productSignal();
 
     const newLines: Line[] = products.map(p => ({
       id: 0,
@@ -44,6 +50,9 @@ export class StoragePage {
       profit: 0,
       payment: 'Cash',
       phone: '',
+      inventoryItemId: null,
+      locationId: locationId ?? null,
+      locationName: locationName ?? null,
     }));
 
     if (!newLines.length) {
@@ -51,7 +60,10 @@ export class StoragePage {
     }
 
     try {
-      await this.inventory.addProducts(newLines);
+      await this.inventory.addProducts(newLines, {
+        locationId: locationId ?? null,
+        reason: 'Manual addition',
+      });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to add products to Supabase.';
       alert(message);
