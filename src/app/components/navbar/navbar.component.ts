@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -7,5 +7,16 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss']
 })
-export class NavComponent {}
+export class NavComponent {
+  menuOpen = signal(false);
+
+  toggleMenu() {
+    this.menuOpen.update((state) => !state);
+  }
+
+  closeMenu() {
+    this.menuOpen.set(false);
+  }
+}

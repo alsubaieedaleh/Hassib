@@ -4,7 +4,7 @@
     <thead>
       <tr>
         @for (col of columns; track col.key) {
-          <th class="text-left px-2 py-1 whitespace-nowrap">{{ col.label }}</th>
+          <th>{{ col.label }}</th>
         }
       </tr>
     </thead>
@@ -25,16 +25,16 @@
       @for (footerRow of [0, 1]; track $index; let r = $index) {
         <tr>
           @if (r === 0) {
-            <td colspan="3" class="px-2 py-1 font-semibold">Totals</td>
-            <td class="px-2 py-1">{{ totalQty() }}</td>
-            <td class="px-2 py-1">SAR {{ totalCost() | number:'1.2-2' }}</td>
-            <td class="px-2 py-1">SAR {{ totalGross() | number:'1.2-2' }}</td>
-            <td class="px-2 py-1">SAR {{ totalVAT() | number:'1.2-2' }}</td>
-            <td class="px-2 py-1">SAR {{ totalProfit() | number:'1.2-2' }}</td>
+            <td colspan="3">Totals</td>
+            <td>{{ totalQty() }}</td>
+            <td>SAR {{ totalCost() | number:'1.2-2' }}</td>
+            <td>SAR {{ totalGross() | number:'1.2-2' }}</td>
+            <td>SAR {{ totalVAT() | number:'1.2-2' }}</td>
+            <td>SAR {{ totalProfit() | number:'1.2-2' }}</td>
             <td colspan="2"></td>
           } @else {
             <td colspan="4"></td>
-            <td colspan="6" class="text-left px-2 py-1">
+            <td colspan="6" class="payment-break">
               <strong>By Payment:</strong> {{ paymentBreakdownText() }}
             </td>
           }

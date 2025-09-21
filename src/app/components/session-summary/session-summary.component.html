@@ -1,31 +1,38 @@
-<h3 style="margin:6px 0">Session Summary</h3>
+<section class="summary-card">
+  <header class="summary-header">
+    <h2>Session overview</h2>
+    <p class="muted">Track totals as you register each item. Export options appear below.</p>
+  </header>
 
-@if (lines().length > 0) {
-  <div #reportRoot>
-    <div class="summary">
-      @for (m of metrics(); track m.label) {
-        <div class="metric">
-          <span class="small">{{ m.label }}</span>
-          <span>{{ m.value() }}</span>
-        </div>
+  @if (lines().length > 0) {
+    <div #reportRoot>
+      <div class="summary-grid">
+        @for (m of metrics(); track m.label) {
+          <div class="summary-metric">
+            <span class="summary-label">{{ m.label }}</span>
+            <span class="summary-value">{{ m.value() }}</span>
+          </div>
+        }
+      </div>
+
+      <div class="summary-breakdown">
+        <span class="summary-label">Payment mix</span>
+        <span class="muted">{{ paymentBreakdownText() }}</span>
+      </div>
+    </div>
+
+    <div class="summary-actions">
+      @for (a of actions(); track a.key) {
+        <button class="{{ a.css }}" (click)="a.run()">{{ a.label }}</button>
       }
     </div>
-
-    <div style="margin-top:10px">
-      <div class="small">Payment Breakdown</div>
-      <div class="payment-break">{{ paymentBreakdownText() }}</div>
+  } @else {
+    <div class="summary-empty">
+      <p>No session lines yet. Start by adding products on the left.</p>
     </div>
-  </div>
+  }
 
-  <div class="actions">
-    @for (a of actions(); track a.key) {
-      <button class="{{ a.css }}" (click)="a.run()">{{ a.label }}</button>
-    }
-  </div>
-} @else {
-  <div class="small" style="color:var(--muted)">No session lines yet.</div>
-}
-
-<div class="footer-note small mobile-hide">
-  Tip: Use the export as a quick record at shift-end. No data leaves your device unless you choose to share.
-</div>
+  <footer class="summary-footer">
+    <small>Tip: exports stay on your device until you choose to share them.</small>
+  </footer>
+</section>
