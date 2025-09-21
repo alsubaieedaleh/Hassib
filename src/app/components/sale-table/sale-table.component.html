@@ -1,10 +1,10 @@
-﻿<!-- âœ… Responsive Table Wrapper: scroll on small screens only -->
-<div class="w-full overflow-x-auto">
-  <table class="w-full text-sm min-w-max" aria-live="polite">
+<!-- ✅ Responsive table wrapper: scroll on small screens only -->
+<div class="table-scroll">
+  <table class="ui-table" aria-live="polite">
     <thead>
       <tr>
         @for (col of columns; track col.key) {
-          <th>{{ col.label }}</th>
+          <th scope="col">{{ col.label }}</th>
         }
       </tr>
     </thead>
@@ -13,7 +13,7 @@
       @for (ln of lines(); track $index; let i = $index) {
         <tr>
           @for (col of columns; track col.key) {
-            <td class="px-2 py-1 whitespace-nowrap" [class]="col.class">
+            <td class="whitespace-nowrap" [ngClass]="col.class">
               {{ col.format ? col.format({ line: ln, index: i }) : '' }}
             </td>
           }
@@ -35,7 +35,7 @@
           } @else {
             <td colspan="4"></td>
             <td colspan="6" class="payment-break">
-              <strong>By Payment:</strong> {{ paymentBreakdownText() }}
+              <strong>By payment:</strong> {{ paymentBreakdownText() }}
             </td>
           }
         </tr>
@@ -43,4 +43,3 @@
     </tfoot>
   </table>
 </div>
-
