@@ -65,7 +65,8 @@ textarea:focus-visible {
 
 img {
   max-width: 100%;
-  display: block;
+  height: auto;
+  display: inline-block;
 }
 
 .page-container {
