@@ -20,6 +20,7 @@
         [showPayment]="false"
         [showPhone]="false"
         [showVAT]="false"
+        [showLocation]="true"
         [submitLabel]="'Add to storage'"
         (submitted)="addProduct($event)"
       ></product-form>
@@ -31,7 +32,7 @@
         <p class="muted">Overview of products currently held in inventory.</p>
       </div>
       <div class="table-wrapper">
-        <sale-table [linesInput]="inventory.products()"></sale-table>
+        <sale-table [linesInput]="inventory.products()" [showLocationColumn]="true"></sale-table>
       </div>
 
       <div class="section-divider"></div>

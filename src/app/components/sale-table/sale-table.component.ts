@@ -33,6 +33,7 @@ export class SaleTableComponent {
    * Signal input used by Angular's binding system. Do NOT change or remove.
    */
   readonly linesInput = input<Line[]>([]);
+  readonly showLocationColumn = input<boolean>(false);
 
   /**
    * Writable internal signal used by the template for both bound and dynamic updates.
@@ -56,7 +57,7 @@ export class SaleTableComponent {
     });
   }
 
-  columns: Column[] = [
+  private readonly baseColumns: Column[] = [
     { key: 'index', label: '#', format: ({ index }) => String(index + 1) },
     { key: 'barcode', label: 'Barcode', format: ({ line }) => line.barcode },
     { key: 'name', label: 'Product', format: ({ line }) => line.name, class: 'text-left pl-2' },
@@ -68,6 +69,24 @@ export class SaleTableComponent {
     { key: 'payment', label: 'Payment', format: ({ line }) => line.payment },
     { key: 'phone', label: 'Phone', format: ({ line }) => line.phone }
   ];
+
+  columns = computed<Column[]>(() => {
+    if (!this.showLocationColumn()) {
+      return this.baseColumns;
+    }
+
+    const withLocation = [...this.baseColumns];
+    withLocation.splice(3, 0, {
+      key: 'location',
+      label: 'Location',
+      class: 'text-left pl-2',
+      format: ({ line }: ColumnFormatArgs) => line.locationName ?? (line.locationId ? `#${line.locationId}` : '—'),
+    });
+    return withLocation;
+  });
+
+  metaTotalsSpan = computed(() => (this.showLocationColumn() ? 4 : 3));
+  paymentPrefixSpan = computed(() => (this.showLocationColumn() ? 5 : 4));
 
   totalQty = computed(() => this.lines().reduce((sum, line) => sum + line.qty, 0));
   totalCost = computed(() => this.lines().reduce((sum, line) => sum + line.cost * line.qty, 0));

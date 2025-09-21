@@ -3,7 +3,7 @@
   <table class="ui-table" aria-live="polite">
     <thead>
       <tr>
-        @for (col of columns; track col.key) {
+        @for (col of columns(); track col.key) {
           <th scope="col">{{ col.label }}</th>
         }
       </tr>
@@ -12,7 +12,7 @@
     <tbody>
       @for (ln of lines(); track $index; let i = $index) {
         <tr>
-          @for (col of columns; track col.key) {
+          @for (col of columns(); track col.key) {
             <td class="whitespace-nowrap" [ngClass]="col.class">
               {{ col.format ? col.format({ line: ln, index: i }) : '' }}
             </td>
@@ -25,7 +25,7 @@
       @for (footerRow of [0, 1]; track $index; let r = $index) {
         <tr>
           @if (r === 0) {
-            <td colspan="3">Totals</td>
+            <td [attr.colspan]="metaTotalsSpan()">Totals</td>
             <td>{{ totalQty() }}</td>
             <td>SAR {{ totalCost() | number:'1.2-2' }}</td>
             <td>SAR {{ totalGross() | number:'1.2-2' }}</td>
@@ -33,7 +33,7 @@
             <td>SAR {{ totalProfit() | number:'1.2-2' }}</td>
             <td colspan="2"></td>
           } @else {
-            <td colspan="4"></td>
+            <td [attr.colspan]="paymentPrefixSpan()"></td>
             <td colspan="6" class="payment-break">
               <strong>By payment:</strong> {{ paymentBreakdownText() }}
             </td>
