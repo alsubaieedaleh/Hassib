@@ -1,57 +1,35 @@
-<nav class="top-nav" aria-label="Primary navigation">
-  <div class="nav-inner">
-    <a class="brand" routerLink="/" (click)="closeMenu()">
-      <span class="brand-mark" aria-hidden="true">H</span>
-      <span class="brand-copy">
-        <span class="brand-title">Hassib</span>
-        <span class="brand-subtitle">POS &amp; Inventory Hub</span>
-      </span>
-    </a>
+<!-- nav.component.html -->
+<nav class="nav flex gap-4 items-center justify-center bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
+  <a
+    routerLink="/"
+    routerLinkActive="text-green-600 font-semibold"
+    class="text-gray-600 hover:text-green-600 transition text-sm flex items-center gap-2"
+  >
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" />
+    </svg>
+    Main
+  </a>
 
-    <button
-      type="button"
-      class="menu-toggle"
-      (click)="toggleMenu()"
-      [attr.aria-expanded]="menuOpen()"
-      aria-controls="primary-navigation"
-    >
-      <span class="sr-only">Toggle navigation</span>
-      <svg aria-hidden="true" class="icon" viewBox="0 0 24 24">
-        <path
-          [attr.d]="menuOpen() ? 'M6 6L18 18M6 18L18 6' : 'M4 6h16M4 12h16M4 18h16'"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        />
-      </svg>
-    </button>
+  <a
+    routerLink="/sales"
+    routerLinkActive="text-green-600 font-semibold"
+    class="text-gray-600 hover:text-green-600 transition text-sm flex items-center gap-2"
+  >
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M4 4h16v4H4zM4 10h16v10H4z" />
+    </svg>
+    Sales
+  </a>
 
-    <div class="nav-links" [class.open]="menuOpen()" id="primary-navigation">
-      <a
-        routerLink="/"
-        routerLinkActive="active"
-        class="nav-link"
-        (click)="closeMenu()"
-      >
-        Overview
-      </a>
-      <a
-        routerLink="/sales"
-        routerLinkActive="active"
-        class="nav-link"
-        (click)="closeMenu()"
-      >
-        Sales Workspace
-      </a>
-      <a
-        routerLink="/storage"
-        routerLinkActive="active"
-        class="nav-link"
-        (click)="closeMenu()"
-      >
-        Inventory
-      </a>
-    </div>
-  </div>
+  <a
+    routerLink="/storage"
+    routerLinkActive="text-green-600 font-semibold"
+    class="text-gray-600 hover:text-green-600 transition text-sm flex items-center gap-2"
+  >
+    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+      <path d="M3 7l9-4 9 4v13a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+    </svg>
+    Storage
+  </a>
 </nav>

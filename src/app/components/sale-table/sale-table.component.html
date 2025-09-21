@@ -1,5 +1,6 @@
-<div class="table-scroll">
-  <table class="data-table" aria-live="polite">
+﻿<!-- âœ… Responsive Table Wrapper: scroll on small screens only -->
+<div class="w-full overflow-x-auto">
+  <table class="w-full text-sm min-w-max" aria-live="polite">
     <thead>
       <tr>
         @for (col of columns; track col.key) {
@@ -12,8 +13,8 @@
       @for (ln of lines(); track $index; let i = $index) {
         <tr>
           @for (col of columns; track col.key) {
-            <td [class]="col.class">
-              {{ col.format ? col.format(ln, i) : '' }}
+            <td class="px-2 py-1 whitespace-nowrap" [class]="col.class">
+              {{ col.format ? col.format({ line: ln, index: i }) : '' }}
             </td>
           }
         </tr>
@@ -42,3 +43,4 @@
     </tfoot>
   </table>
 </div>
+
