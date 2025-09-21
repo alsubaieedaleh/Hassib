@@ -1,4 +1,4 @@
-// eslint.config.js
+﻿// eslint.config.js
 import eslintPluginAngular from "@angular-eslint/eslint-plugin";
 import angularTemplateParser from "@angular-eslint/template-parser";
 import tsParser from "@typescript-eslint/parser";
@@ -14,6 +14,17 @@ export default [
       parserOptions: {
         project: ["./tsconfig.json"],
         sourceType: "module"
+      },
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        localStorage: "readonly",
+        alert: "readonly",
+        confirm: "readonly",
+        setTimeout: "readonly",
+        crypto: "readonly",
+        btoa: "readonly",
+        console: "readonly"
       }
     },
     plugins: {
@@ -22,7 +33,30 @@ export default [
     },
     rules: {
       // Add your Angular+TS rules here
-      "@typescript-eslint/no-unused-vars": "error"
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_"
+        }
+      ]
+    }
+  },
+  {
+    files: ["**/*.spec.ts"],
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        it: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        expect: "readonly",
+        jest: "readonly"
+      }
     }
   },
   {
@@ -38,3 +72,4 @@ export default [
     }
   }
 ];
+

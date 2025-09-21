@@ -1,4 +1,4 @@
-<!-- ✅ Responsive Table Wrapper: scroll on small screens only -->
+﻿<!-- âœ… Responsive Table Wrapper: scroll on small screens only -->
 <div class="w-full overflow-x-auto">
   <table class="w-full text-sm min-w-max" aria-live="polite">
     <thead>
@@ -14,7 +14,7 @@
         <tr>
           @for (col of columns; track col.key) {
             <td class="px-2 py-1 whitespace-nowrap" [class]="col.class">
-              {{ col.format ? col.format(ln, i) : '' }}
+              {{ col.format ? col.format({ line: ln, index: i }) : '' }}
             </td>
           }
         </tr>
@@ -43,3 +43,4 @@
     </tfoot>
   </table>
 </div>
+
