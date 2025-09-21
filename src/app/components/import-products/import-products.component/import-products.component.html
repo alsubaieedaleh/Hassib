@@ -1,25 +1,23 @@
-<div class="card p-4 mb-6 shadow-sm border rounded-lg bg-white mt-5">
-  <h3 class="text-lg font-semibold mb-3 text-teal-800">📦 Import Products</h3>
+<section class="form-card upload-card">
+  <div class="flex items-start justify-between gap-3 flex-wrap">
+    <div>
+      <h3 class="text-lg font-semibold text-slate-800">Import products</h3>
+      <p class="text-sm text-slate-500">Upload an Excel sheet to populate your catalogue instantly.</p>
+    </div>
+  </div>
 
-  <label for="fileInput" class="block text-sm font-medium text-gray-700 mb-2">
-    Select Excel file (.xlsx):
-  </label>
+  <div class="form-field mt-4">
+    <label class="form-label" for="fileInput">Select Excel file (.xlsx)</label>
+    <input
+      id="fileInput"
+      type="file"
+      accept=".xlsx"
+      class="form-control"
+      (change)="importFile($event)"
+    />
+  </div>
 
-  <input
-    id="fileInput"
-    type="file"
-    accept=".xlsx"
-    (change)="importFile($event)"
-    class="block w-full text-sm text-gray-700 
-           file:mr-4 file:py-2 file:px-4 
-           file:rounded file:border-0 
-           file:text-sm file:font-semibold 
-           file:bg-teal-600 file:text-white 
-           hover:file:bg-teal-700 transition-colors"
-  />
-
-  <p class="text-xs text-gray-500 mt-2">
-    Expected columns: <code>barcode</code>, <code>name</code>,
-    <code>qty</code>, <code>price</code>, <code>cost</code>
+  <p class="form-hint mt-2">
+    Expected columns: <code>barcode</code>, <code>name</code>, <code>qty</code>, <code>price</code>, <code>cost</code>
   </p>
-</div>
+</section>
