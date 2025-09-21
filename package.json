@@ -8,7 +8,8 @@
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:ci": "jest --ci --runInBand "
+    "test:ci": "jest --ci --runInBand ",
+    "lint": "ng lint"
   },
   "private": true,
   "dependencies": {
@@ -37,12 +38,20 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^20.0.0",
+    "@angular-eslint/builder": "^20.3.0",
+    "@angular-eslint/eslint-plugin": "^20.3.0",
+    "@angular-eslint/eslint-plugin-template": "^20.3.0",
+    "@angular-eslint/schematics": "^20.3.0",
+    "@angular-eslint/template-parser": "^20.3.0",
     "@angular/cli": "^20.0.0",
     "@angular/compiler-cli": "^20.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/jest": "^30.0.0",
     "@types/qrcode": "^1.5.5",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
     "autoprefixer": "^10.4.21",
+    "eslint": "^9.36.0",
     "jasmine-core": "~5.1.0",
     "jest-preset-angular": "^14.6.1",
     "karma": "~6.4.0",
