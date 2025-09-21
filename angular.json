@@ -30,6 +30,7 @@
               "src/assets"
             ],
             "styles": [
+              "src/tailwind-input.css",
               "src/styles.scss"
             ],
             "scripts": []
@@ -91,6 +92,7 @@
               "src/assets"
             ],
             "styles": [
+              "src/tailwind-input.css",
               "src/styles.scss"
             ],
             "scripts": []
