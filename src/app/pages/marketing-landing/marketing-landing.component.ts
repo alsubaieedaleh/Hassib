@@ -37,6 +37,18 @@ export class MarketingLandingPage {
     'Works across tablet and desktop with offline support planned'
   ];
 
+  readonly salesTrend: ReadonlyArray<{ label: string; amount: number }> = [
+    { label: '10:00', amount: 8200 },
+    { label: '11:00', amount: 9600 },
+    { label: '12:00', amount: 7800 },
+    { label: '13:00', amount: 11240 },
+    { label: '14:00', amount: 10480 },
+    { label: '15:00', amount: 12650 },
+    { label: '16:00', amount: 11980 }
+  ];
+
+  private readonly peakSalesAmount = this.salesTrend.reduce((max, point) => Math.max(max, point.amount), 0);
+
   schemaMarkup: SafeHtml;
 
   constructor() {
@@ -73,5 +85,14 @@ export class MarketingLandingPage {
     };
 
     this.schemaMarkup = this.sanitizer.bypassSecurityTrustHtml(JSON.stringify(schema));
+  }
+
+  trendHeight(value: number): number {
+    if (!this.peakSalesAmount) {
+      return 0;
+    }
+
+    const percentage = (value / this.peakSalesAmount) * 100;
+    return Math.min(100, Math.max(8, Math.round(percentage)));
   }
 }
