@@ -50,7 +50,7 @@ export class StorageLocationService {
         throw error;
       }
 
-      const mapped = (data ?? []).map(row => this.mapRow(row));
+      const mapped = (data ?? []).map((row: unknown) => this.mapRow(row));
       this.locationsSignal.set(mapped);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load storage locations.';
@@ -83,7 +83,7 @@ export class StorageLocationService {
       }
 
       if (data && data.length) {
-        this.locationsSignal.set(data.map(row => this.mapRow(row)));
+        this.locationsSignal.set(data.map((row: unknown) => this.mapRow(row)));
         return;
       }
 
