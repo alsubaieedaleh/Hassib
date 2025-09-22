@@ -4,8 +4,12 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": [
+      "jest",
       "jasmine"
-    ]
+    ],
+    "paths": {
+      "@supabase/supabase-js": ["src/testing/supabase-js.mock"]
+    }
   },
   "include": [
     "src/**/*.spec.ts",
