@@ -1,35 +1,59 @@
- <div>
-
-<div class="pm-controls">
-  <button class="ghost" type="button" (click)="refreshInventory()" [disabled]="inventory.loading()">
-    Refresh from Supabase
-  </button>
-</div>
-
-@if (inventory.loading()) {
-  <div class="pm-status">Loading inventory from Supabase…</div>
-}
-@if (!inventory.loading() && inventory.error()) {
-  <div class="pm-status error">{{ inventory.error() }}</div>
-}
-
-@for (line of inventory.products(); track line.id) {
-  <div class="prod-chip">
-    <div style="text-align:left">
-      <strong>{{ line.name }}</strong>
-      <div class="small">
-        Barcode: {{ line.barcode || '—' }} • Price: SAR {{ line.price | number:'1.2-2' }} • Qty: {{ line.qty }}
-      </div>
+<ui-card class="product-manager" uiCardVariant="muted" [uiCardInteractive]="false">
+  <header class="product-manager__header">
+    <div class="product-manager__titles">
+      <span class="product-manager__eyebrow">Inventory tools</span>
+      <h3 class="product-manager__title">Quick editor</h3>
+      <p class="product-manager__subtitle">Adjust pricing, costs, or remove products in bulk.</p>
     </div>
-    <button class="ghost" type="button" (click)="removeProduct(line)" [disabled]="inventory.loading()">
-      Delete
+    <button
+      uiButton="outline"
+      uiButtonSize="sm"
+      type="button"
+      (click)="refreshInventory()"
+      [disabled]="inventory.loading()"
+      aria-label="Refresh inventory from Supabase"
+    >
+      <span class="product-manager__refresh-icon" aria-hidden="true">⟳</span>
+      Refresh inventory
     </button>
+  </header>
+
+  @if (inventory.loading()) {
+    <div class="product-manager__status" role="status">Loading inventory from Supabase…</div>
+  }
+
+  @if (!inventory.loading() && inventory.error()) {
+    <div class="product-manager__status product-manager__status--error" role="alert">{{ inventory.error() }}</div>
+  }
+
+  <div class="product-manager__list" role="list">
+    @for (line of inventory.products(); track line.id) {
+      <article class="product-manager__item" role="listitem">
+        <div class="product-manager__details">
+          <h4 class="product-manager__name">{{ line.name }}</h4>
+          <p class="product-manager__meta">
+            <span>Barcode: {{ line.barcode || '—' }}</span>
+            <span>Price: SAR {{ line.price | number: '1.2-2' }}</span>
+            <span>Qty: {{ line.qty }}</span>
+          </p>
+        </div>
+        <button
+          uiButton="ghost"
+          uiButtonSize="sm"
+          type="button"
+          (click)="removeProduct(line)"
+          [disabled]="inventory.loading()"
+        >
+          Remove
+        </button>
+      </article>
+    }
   </div>
-}
-@if (!inventory.loading() && inventory.products().length === 0) {
-  <div class="small" style="color:var(--muted)">No inventory records found in Supabase.</div>
-}
- 
- 
-</div>
- 
+
+  @if (!inventory.loading() && inventory.products().length === 0) {
+    <div class="product-manager__empty">
+      <h4>No stored products yet</h4>
+      <p>Import a spreadsheet or add items on the left to manage them here.</p>
+    </div>
+  }
+</ui-card>

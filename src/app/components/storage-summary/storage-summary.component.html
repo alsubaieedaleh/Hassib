@@ -1,7 +1,24 @@
-<section class="storage-summary" #reportRoot>
+<ui-card
+  class="storage-summary"
+  uiCardVariant="gradient"
+  uiCardPadding="lg"
+  [uiCardInteractive]="false"
+  #reportRoot
+>
   <header class="storage-summary__header">
-    <h2>Storage summary</h2>
-    <p class="muted">Quick overview of key inventory figures for the current session.</p>
+    <div class="storage-summary__titles">
+      <span class="storage-summary__eyebrow">Snapshot</span>
+      <h2 class="storage-summary__title">Storage summary</h2>
+      <p class="storage-summary__subtitle">Quick overview of key inventory figures for the current session.</p>
+    </div>
+
+    <div class="storage-summary__actions">
+      @for (action of actions(); track action.key) {
+        <button type="button" [uiButton]="action.variant" uiButtonSize="sm" (click)="action.run()">
+          {{ action.label }}
+        </button>
+      }
+    </div>
   </header>
 
   <div class="storage-summary__metrics">
@@ -9,15 +26,10 @@
       <div class="storage-summary__metric">
         <span class="storage-summary__label">{{ metric.label }}</span>
         <span class="storage-summary__value">{{ metric.value() }}</span>
+        @if (metric.hint) {
+          <span class="storage-summary__hint">{{ metric.hint }}</span>
+        }
       </div>
     }
   </div>
-
-  <div class="storage-summary__actions">
-    @for (action of actions(); track action.key) {
-      <button type="button" class="btn ghost btn--small" (click)="action.run()">
-        {{ action.label }}
-      </button>
-    }
-  </div>
-</section>
+</ui-card>

@@ -6,6 +6,7 @@ import { ProductManagerComponent } from '../../components/product-manager/produc
 import { SaleTableComponent } from '../../components/sale-table/sale-table.component';
 import { SessionSummaryComponent } from '../../components/session-summary/session-summary.component';
 import { ReceiptComponent } from '../../components/receipt/receipt.component';
+import { UiCardComponent } from '../../ui';
 
 import { Line, Payment } from '../../shared/models/line.model';
 import { ProductFormValue } from '../../shared/models/product.model';
@@ -21,7 +22,8 @@ import { SalesService } from "../../shared/services/sales.service";
     ProductManagerComponent,
     SaleTableComponent,
     SessionSummaryComponent,
-    ReceiptComponent
+    ReceiptComponent,
+    UiCardComponent
   ],
   templateUrl: './sales-page.component.html',
   styleUrls: ['./sales-page.component.scss']

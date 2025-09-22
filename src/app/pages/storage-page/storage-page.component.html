@@ -11,7 +11,7 @@
   <app-import-products></app-import-products>
 
   <div class="workspace-grid">
-    <section class="card workspace-main">
+    <ui-card class="workspace-main" uiCardVariant="surface" [uiCardInteractive]="false">
       <div class="module-header">
         <h2>Add products</h2>
         <p class="muted">Capture SKU details and update stock levels instantly.</p>
@@ -37,15 +37,9 @@
 
       <div class="section-divider"></div>
 
-      <div class="module-header">
-        <h2>Quick editor</h2>
-        <p class="muted">Adjust pricing, costs, or remove products in bulk.</p>
-      </div>
       <product-manager></product-manager>
-    </section>
+    </ui-card>
 
-    <aside class="card workspace-aside">
-      <storage-summary [lines]="inventory.products()"></storage-summary>
-    </aside>
+    <storage-summary class="workspace-aside" [lines]="inventory.products()"></storage-summary>
   </div>
 </div>

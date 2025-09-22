@@ -1,0 +1,51 @@
+:host {
+  --ui-card-bg: var(--surface);
+  --ui-card-border: var(--border);
+  --ui-card-shadow: var(--shadow-soft);
+  --ui-card-color: inherit;
+  display: block;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--ui-card-border);
+  padding: clamp(1.2rem, 2.4vw, 1.9rem);
+  background: var(--ui-card-bg);
+  box-shadow: var(--ui-card-shadow);
+  color: var(--ui-card-color);
+  backdrop-filter: blur(20px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+:host(.ui-card--sm) {
+  padding: clamp(1rem, 1.6vw, 1.4rem);
+}
+
+:host(.ui-card--lg) {
+  padding: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+:host(.ui-card--muted) {
+  --ui-card-bg: var(--surface-muted);
+  --ui-card-border: rgba(15, 23, 42, 0.08);
+}
+
+:host(.ui-card--surface) {
+  --ui-card-bg: var(--surface);
+  --ui-card-border: rgba(148, 163, 184, 0.2);
+  --ui-card-shadow: 0 24px 45px -32px rgba(15, 23, 42, 0.15);
+}
+
+:host(.ui-card--gradient) {
+  --ui-card-bg: linear-gradient(145deg, rgba(14, 165, 233, 0.12), rgba(59, 130, 246, 0.08) 48%, rgba(16, 185, 129, 0.18));
+  --ui-card-border: rgba(14, 165, 233, 0.35);
+  --ui-card-shadow: 0 28px 52px -30px rgba(14, 165, 233, 0.28);
+}
+
+:host(:hover) {
+  transform: translateY(-3px);
+  box-shadow: 0 32px 60px -32px rgba(15, 23, 42, 0.2);
+}
+
+:host(.ui-card--static),
+:host(.ui-card--static:hover) {
+  transform: none;
+  box-shadow: var(--ui-card-shadow);
+}

@@ -1,4 +1,4 @@
-<section class="form-card upload-card">
+<ui-card class="upload-card" uiCardVariant="surface" [uiCardInteractive]="false">
   <div class="flex items-start justify-between gap-3 flex-wrap">
     <div>
       <h3 class="text-lg font-semibold text-slate-800">Import products</h3>
@@ -12,14 +12,14 @@
       id="fileInput"
       type="file"
       accept=".xlsx"
-      class="form-control"
+      uiInput
       (change)="importFile($event)"
     />
   </div>
 
   <div class="form-field mt-4">
     <label class="form-label">Destination location</label>
-    <select class="form-control" [value]="selectedLocationId() ?? ''" (change)="onLocationChange($event)">
+    <select uiInput [value]="selectedLocationId() ?? ''" (change)="onLocationChange($event)">
       @if (!locationOptions().length) {
         <option value="">No locations available</option>
       } @else {
@@ -39,4 +39,4 @@
   <p class="form-hint mt-2">
     Expected columns: <code>barcode</code>, <code>name</code>, <code>qty</code>, <code>price</code>, <code>cost</code>
   </p>
-</section>
+</ui-card>
