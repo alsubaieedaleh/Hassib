@@ -91,7 +91,7 @@ export class InventoryService {
         throw error;
       }
 
-      const mapped = (data ?? []).map(row => this.mapRowToLine(row as InventoryRow));
+      const mapped = (data ?? []).map((row: InventoryRow) => this.mapRowToLine(row));
       this.productsSignal.set(mapped);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to load inventory from Supabase.';
@@ -125,12 +125,12 @@ export class InventoryService {
       throw error;
     }
 
-    const inserted = (data ?? []).map(row => this.mapRowToLine(row as InventoryRow));
+    const inserted = (data ?? []).map((row: InventoryRow) => this.mapRowToLine(row));
     if (inserted.length) {
       this.productsSignal.update(prev => [...inserted, ...prev]);
       try {
         await this.insertMovements(
-          inserted.map(line => ({
+          inserted.map((line: Line) => ({
             inventory_item_id: line.id,
             location_id: line.locationId ?? options.locationId ?? null,
             change: Math.abs(line.qty),
