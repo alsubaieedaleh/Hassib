@@ -26,9 +26,18 @@ Restart the dev server (`npm start`) after changing these files so that Angular 
 values.
 
 ## 3. Database schema
-The application uses Supabase tables for inventory (storage) and sales data. The statements below
-create the minimum schema and connect the tables together. Run them in the Supabase SQL editor or as
-part of a migration script.
+The application uses Supabase tables for inventory (storage) and sales data. The repository now ships
+with a ready-to-run migration (`supabase/migrations/20240604120000_create_storage_and_sales_tables.sql`)
+that provisions the tables, triggers, indexes and row-level security (RLS) policies expected by the
+Angular services.
+
+- **Using the Supabase CLI**: run `supabase db push` from the project root after configuring the CLI
+  to point to your project. The migration will be applied automatically.
+- **Using the dashboard**: copy the statements from the migration file into the SQL editor and run
+  them once. The SQL is also reproduced below for convenience.
+
+The statements below create the minimum schema and connect the tables together. Run them in the
+Supabase SQL editor or as part of a migration script.
 
 ```sql
 create table if not exists public.storage_locations (
