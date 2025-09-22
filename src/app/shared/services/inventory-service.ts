@@ -85,7 +85,7 @@ export class InventoryService {
         .select(
           'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
         )
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) {
         throw error;
@@ -119,7 +119,7 @@ export class InventoryService {
       .select(
         'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
       )
-      .order('created_at', { ascending: false });
+      .order('id', { ascending: false });
 
     if (error) {
       throw error;
