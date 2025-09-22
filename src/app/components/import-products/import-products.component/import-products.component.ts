@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../../shared/services/inventory-service';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { StorageLocationService } from '../../../shared/services/storage-location.service';
+import { UiCardComponent, UiInputComponent } from '../../../ui';
 
 @Component({
   selector: 'app-import-products',
   standalone: true,
-  imports: [CommonModule, MatSnackBarModule],
+  imports: [CommonModule, MatSnackBarModule, UiCardComponent, UiInputComponent],
   templateUrl: './import-products.component.html',
   styleUrls: ['./import-products.component.scss'],
 })

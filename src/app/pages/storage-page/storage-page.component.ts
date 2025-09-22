@@ -11,6 +11,7 @@ import { StorageSummaryComponent } from '../../components/storage-summary/storag
 import { ProductFormValue } from '../../shared/models/product.model';
 import { Line } from '../../shared/models/line.model';
 import { ImportProductsComponent } from '../../components/import-products/import-products.component/import-products.component';
+import { UiCardComponent } from '../../ui';
 
 @Component({
   selector: 'app-storage-page',
@@ -21,7 +22,8 @@ import { ImportProductsComponent } from '../../components/import-products/import
     ProductManagerComponent,
     SaleTableComponent,
     StorageSummaryComponent,
-    ImportProductsComponent 
+    ImportProductsComponent,
+    UiCardComponent
   ],
   templateUrl: './storage-page.component.html',
   styleUrls: ['./storage-page.scss']

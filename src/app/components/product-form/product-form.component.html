@@ -9,11 +9,13 @@
   </header>
 
   @for (form of productForms(); track $index) {
-    <div class="form-card">
+    <ui-card class="form-card" uiCardVariant="surface" [uiCardInteractive]="false">
       @if (productForms().length > 1) {
         <button
           type="button"
           class="form-card__remove"
+          uiButton="ghost"
+          uiButtonSize="sm"
           (click)="removeProduct($index)"
           aria-label="Remove product"
         >
@@ -30,7 +32,7 @@
             <label class="form-label">{{ field.label }}</label>
             <input
               [type]="field.type"
-              class="form-control"
+              uiInput
               [attr.placeholder]="field.placeholder"
               [value]="field.getter(form)"
               [step]="field.step"
@@ -40,17 +42,17 @@
           </div>
         }
       </div>
-    </div>
+    </ui-card>
   }
 
-  <button type="button" class="link-button" (click)="addProduct()">
+  <button type="button" class="link-button" uiButton="ghost" uiButtonSize="sm" (click)="addProduct()">
     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
       <path d="M12 5v14M5 12h14" />
     </svg>
     Add another product
   </button>
 
-  <div class="form-card mt-4">
+  <ui-card class="form-card mt-4" uiCardVariant="surface" [uiCardInteractive]="false">
     <div class="flex items-center gap-3 mb-4">
       <span class="badge">Sale details</span>
       <p class="text-sm text-slate-500">Contextual information for receipts and exports.</p>
@@ -62,7 +64,7 @@
           <label class="form-label">Storage location</label>
           <div class="flex items-center gap-2">
             <select
-              class="form-control"
+              uiInput
               [value]="locationId() ?? ''"
               (change)="onLocationChange($event)"
             >
@@ -74,7 +76,7 @@
                 }
               }
             </select>
-            <button type="button" class="btn ghost" (click)="createLocation()">
+            <button type="button" uiButton="ghost" uiButtonSize="sm" (click)="createLocation()">
               Add
             </button>
           </div>
@@ -93,7 +95,7 @@
           <input
             type="number"
             readonly
-            class="form-control"
+            uiInput
             placeholder="VAT Rate"
             [value]="fixedVATRate()"
           />
@@ -104,7 +106,7 @@
         <div class="form-field">
           <label class="form-label">Payment type</label>
           <select
-            class="form-control"
+            uiInput
             [value]="payment()"
             (change)="onPaymentChange($event)"
           >
@@ -120,7 +122,7 @@
           <label class="form-label">Customer phone</label>
           <input
             type="text"
-            class="form-control"
+            uiInput
             placeholder="Customer phone"
             [value]="phone()"
             (input)="onPhoneInput($event)"
@@ -128,17 +130,17 @@
         </div>
       }
     </div>
-  </div>
+  </ui-card>
 
   <div class="form-actions mt-6">
-    <button type="button" class="btn" (click)="submit()">
+    <button type="button" uiButton="primary" (click)="submit()">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M5 13l4 4L19 7" />
       </svg>
       {{ submitLabel() }}
     </button>
 
-    <button type="button" class="btn ghost" (click)="clear()">
+    <button type="button" uiButton="ghost" (click)="clear()">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M3 6h18M9 6v12M15 6v12" />
       </svg>

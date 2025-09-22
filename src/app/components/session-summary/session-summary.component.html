@@ -1,4 +1,4 @@
-<section class="summary-card">
+<ui-card class="summary-card" uiCardVariant="muted" [uiCardInteractive]="false">
   <header class="summary-header">
     <h2>Session overview</h2>
     <p class="muted">Track totals as you register each item. Export options appear below.</p>
@@ -23,7 +23,7 @@
 
     <div class="summary-actions">
       @for (a of actions(); track a.key) {
-        <button class="{{ a.css }}" (click)="a.run()">{{ a.label }}</button>
+        <button type="button" [uiButton]="a.variant" uiButtonSize="sm" (click)="a.run()">{{ a.label }}</button>
       }
     </div>
   } @else {
@@ -35,4 +35,4 @@
   <footer class="summary-footer">
     <small>Tip: exports stay on your device until you choose to share them.</small>
   </footer>
-</section>
+</ui-card>

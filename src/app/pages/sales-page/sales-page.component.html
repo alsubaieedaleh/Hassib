@@ -9,7 +9,7 @@
   </header>
 
   <div class="workspace-grid">
-    <section class="card workspace-main">
+    <ui-card class="workspace-main" uiCardVariant="surface" [uiCardInteractive]="false">
       <product-form (submitted)="addReceipt($event)"></product-form>
 
       <div class="section-divider"></div>
@@ -42,10 +42,8 @@
       <div class="table-wrapper">
         <sale-table [linesInput]="lines()"></sale-table>
       </div>
-    </section>
+    </ui-card>
 
-    <aside class="card workspace-aside">
-      <session-summary [lines]="lines()" [receipts]="receipts()"></session-summary>
-    </aside>
+    <session-summary class="workspace-aside" [lines]="lines()" [receipts]="receipts()"></session-summary>
   </div>
 </div>

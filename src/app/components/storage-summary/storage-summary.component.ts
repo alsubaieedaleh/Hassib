@@ -2,15 +2,17 @@ import { Component, computed, input, viewChild, ElementRef, inject } from '@angu
 import { CommonModule } from '@angular/common';
 import { Line } from '../../shared/models/line.model';
 import { ExportService } from '../../shared/services/export.service';
+import { UiButtonComponent, UiCardComponent, UiButtonVariant } from '../../ui';
 
-type Metric = { label: string; value: () => string };
-type Action = { key: 'pdf' | 'xlsx'; label: string; css: string; run: () => void };
+type Metric = { label: string; value: () => string; hint?: string };
+type Action = { key: 'pdf' | 'xlsx'; label: string; variant: UiButtonVariant; run: () => void };
 
 @Component({
   selector: 'storage-summary',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './storage-summary.component.html'
+  imports: [CommonModule, UiButtonComponent, UiCardComponent],
+  templateUrl: './storage-summary.component.html',
+  styleUrls: ['./storage-summary.component.scss']
 })
 export class StorageSummaryComponent {
   lines = input<Line[]>([]);
@@ -20,17 +22,17 @@ export class StorageSummaryComponent {
   totalGross = computed(() => this.lines().reduce((sum, line) => sum + line.grossTotal, 0));
 
   metrics = computed<Metric[]>(() => [
-    { label: 'Stored Items', value: () => String(this.lines().length) },
-    { label: 'Total Quantity', value: () => String(this.totalQty()) },
-    { label: 'Total Cost', value: () => `SAR ${this.totalCost().toFixed(2)}` },
-    { label: 'Total Value', value: () => `SAR ${this.totalGross().toFixed(2)}` }
+    { label: 'Stored items', value: () => String(this.lines().length), hint: 'Unique SKUs available today' },
+    { label: 'Total quantity', value: () => String(this.totalQty()), hint: 'Across all storage locations' },
+    { label: 'Inventory cost', value: () => `SAR ${this.totalCost().toFixed(2)}`, hint: 'Current cost basis' },
+    { label: 'Stock value', value: () => `SAR ${this.totalGross().toFixed(2)}`, hint: 'Estimated retail price' }
   ]);
 
   actions = computed<Action[]>(() => [
     {
       key: 'pdf',
       label: 'Export PDF',
-      css: 'btn',
+      variant: 'primary',
       run: () => {
         this.exportSvc.exportSalesTablePDF(this.lines());
       }
@@ -38,7 +40,7 @@ export class StorageSummaryComponent {
     {
       key: 'xlsx',
       label: 'Export Excel',
-      css: 'btn',
+      variant: 'outline',
       run: () => {
         this.exportSvc.exportXLSX(this.lines(), {
           qty: this.totalQty(),
@@ -51,7 +53,7 @@ export class StorageSummaryComponent {
     }
   ]);
 
-  reportRoot = viewChild<ElementRef<HTMLDivElement>>('reportRoot');
+  reportRoot = viewChild<ElementRef<HTMLElement>>('reportRoot');
 
   private readonly exportSvc = inject(ExportService);
 }

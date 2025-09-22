@@ -1,12 +1,13 @@
 import { Component, inject, input } from '@angular/core';
 import { CommonModule, DatePipe, CurrencyPipe } from '@angular/common';
 import { Line } from '../../shared/models/line.model';
-import { toQRCodeBase64 } from '../../shared/utils/qrcode-generator.util';  
+import { toQRCodeBase64 } from '../../shared/utils/qrcode-generator.util';
+import { UiButtonComponent, UiCardComponent } from '../../ui';
 
 @Component({
   selector: 'receipt',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent],
   templateUrl: './receipt.component.html',
   providers: [DatePipe, CurrencyPipe]
 })

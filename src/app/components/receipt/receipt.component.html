@@ -1,10 +1,10 @@
-<div class="card receipt-card print:p-0 print:shadow-none print:border-none text-sm">
+<ui-card class="receipt-card print:p-0 print:shadow-none print:border-none text-sm" uiCardVariant="surface" [uiCardInteractive]="false">
   <div class="receipt-card__header">
     <div>
       <h2>Receipt</h2>
       <p class="muted text-xs">Lightweight summary ready for printing or export.</p>
     </div>
-    <button class="btn ghost btn--small print:hidden" (click)="print()">
+    <button uiButton="ghost" uiButtonSize="sm" class="print:hidden" (click)="print()">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
         <path d="M6 9V4h12v5" />
         <path d="M6 13h12v7H6z" />
@@ -55,4 +55,4 @@
     <span class="muted text-xs uppercase tracking-widest">VAT included</span>
     <span class="receipt-total">Total: SAR {{ total.toFixed(2) }}</span>
   </div>
-</div>
+</ui-card>

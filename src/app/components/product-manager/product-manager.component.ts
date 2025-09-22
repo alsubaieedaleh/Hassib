@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 
 import { InventoryService } from '../../shared/services/inventory-service';
 import { Line } from '../../shared/models/line.model';
+import { UiButtonComponent, UiCardComponent } from '../../ui';
 
 @Component({
   selector: 'product-manager',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './product-manager.component.html'
+  imports: [CommonModule, UiButtonComponent, UiCardComponent],
+  templateUrl: './product-manager.component.html',
+  styleUrls: ['./product-manager.component.scss']
 })
 export class ProductManagerComponent {
   readonly inventory = inject(InventoryService);

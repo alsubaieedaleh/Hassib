@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { InventoryService } from '../../shared/services/inventory-service';
 import { StorageLocationService } from '../../shared/services/storage-location.service';
 import { StorageLocation } from '../../shared/models/storage-location.model';
+import { UiButtonComponent, UiCardComponent, UiInputComponent } from '../../ui';
 
 
 interface ProductSignals {
@@ -18,8 +19,9 @@ interface ProductSignals {
 @Component({
   selector: 'product-form',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent, UiInputComponent],
   templateUrl: './product-form.component.html',
+  styleUrls: ['./product-form.component.scss'],
 })
 export class ProductFormComponent {
   private inventory = inject(InventoryService);

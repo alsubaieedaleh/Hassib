@@ -1,46 +1,52 @@
 :host {
-  box-sizing: border-box;
+  display: block;
   width: 100%;
 }
 
 .storage-summary {
   display: grid;
+  gap: 2rem;
+  color: var(--text-primary);
+}
+
+.storage-summary__header {
+  display: flex;
+  flex-direction: column;
   gap: 1.25rem;
 }
 
-.storage-summary__header h2 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
+@media (min-width: 720px) {
+  .storage-summary__header {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+  }
 }
 
-.storage-summary__metrics {
+.storage-summary__titles {
   display: grid;
-  gap: 0.9rem;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.4rem;
 }
 
-.storage-summary__metric {
-  padding: 0.85rem 1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  background: var(--surface-muted);
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.storage-summary__label {
-  font-size: 0.78rem;
-  letter-spacing: 0.16em;
+.storage-summary__eyebrow {
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(15, 23, 42, 0.55);
+  font-weight: 700;
+  color: rgba(14, 165, 233, 0.85);
 }
 
-.storage-summary__value {
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: var(--text-primary);
+.storage-summary__title {
+  margin: 0;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  font-weight: 700;
+}
+
+.storage-summary__subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: rgba(15, 23, 42, 0.7);
 }
 
 .storage-summary__actions {
@@ -49,9 +55,45 @@
   gap: 0.75rem;
 }
 
-@media (max-width: 600px) {
+.storage-summary__metrics {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.storage-summary__metric {
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 28px 46px -38px rgba(14, 165, 233, 0.35);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.storage-summary__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.storage-summary__value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.storage-summary__hint {
+  font-size: 0.82rem;
+  color: rgba(15, 23, 42, 0.6);
+}
+
+@media (max-width: 640px) {
   .storage-summary__actions {
+    width: 100%;
     flex-direction: column;
-    align-items: stretch;
   }
 }

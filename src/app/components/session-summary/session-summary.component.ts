@@ -2,14 +2,15 @@ import { Component, input, computed, viewChild, ElementRef, inject } from '@angu
 import { CommonModule } from '@angular/common';
 import { Line } from '../../shared/models/line.model';
 import { ExportService } from '../../shared/services/export.service';
+import { UiButtonComponent, UiCardComponent, UiButtonVariant } from '../../ui';
 
 type Metric = { label: string; value: () => string };
-type Action = { key: 'pdf' | 'xlsx' | 'csv'; label: string; css: string; run: () => void };
+type Action = { key: 'pdf' | 'xlsx' | 'csv'; label: string; variant: UiButtonVariant; run: () => void };
 
 @Component({
   selector: 'session-summary',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, UiButtonComponent, UiCardComponent],
   templateUrl: './session-summary.component.html',
   styleUrls: ['./session-summary.component.scss']
 })
@@ -51,7 +52,7 @@ export class SessionSummaryComponent {
     {
       key: 'pdf',
       label: 'Export PDF',
-      css: 'btn primary',
+      variant: 'primary',
       run: () => {
         this.exportSvc.exportSalesTablePDF(this.lines());
       }
@@ -60,7 +61,7 @@ export class SessionSummaryComponent {
     {
       key: 'xlsx',
       label: 'Export Excel',
-      css: 'btn',
+      variant: 'secondary',
       run: () => this.exportSvc.exportXLSX(this.lines(), {
         qty: this.totalQty(),
         cost: this.totalCost(),
@@ -72,7 +73,7 @@ export class SessionSummaryComponent {
     {
       key: 'csv',
       label: 'Export CSV',
-      css: 'btn ghost',
+      variant: 'ghost',
       run: () => this.exportSvc.exportCSV(this.lines(), {
         qty: this.totalQty(),
         cost: this.totalCost(),
