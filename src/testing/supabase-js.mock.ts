@@ -1,5 +1,13 @@
 export type SupabaseClient = any;
 
+export interface Session {
+  user: {
+    id: string;
+    email?: string | null;
+    user_metadata?: Record<string, unknown>;
+  } | null;
+}
+
 export const createClient = (
   _url?: unknown,
   _anonKey?: unknown,

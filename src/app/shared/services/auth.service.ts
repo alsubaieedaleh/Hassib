@@ -2,6 +2,7 @@ import { Injectable, Signal, inject, signal } from '@angular/core';
 import type { Session } from '@supabase/supabase-js';
 
 import { SupabaseService } from './supabase.service';
+import { UserService } from './user.service';
 
 interface SignUpPayload {
   email: string;
@@ -12,6 +13,7 @@ interface SignUpPayload {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly supabase = inject(SupabaseService);
+  private readonly userStore = inject(UserService);
 
   private readonly sessionSignal = signal<Session | null>(null);
   private readonly loadingSignal = signal<boolean>(false);
@@ -26,10 +28,12 @@ export class AuthService {
 
     void client.auth.getSession().then(({ data }) => {
       this.sessionSignal.set(data.session ?? null);
+      this.userStore.syncFromSession(data.session ?? null);
     });
 
     client.auth.onAuthStateChange((_event, session) => {
       this.sessionSignal.set(session);
+      this.userStore.syncFromSession(session ?? null);
     });
   }
 
@@ -67,6 +71,9 @@ export class AuthService {
       if (error) {
         throw error;
       }
+
+      const { data } = await client.auth.getSession();
+      this.userStore.syncFromSession(data.session ?? null);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to sign in with Supabase.';
       this.errorSignal.set(message);
@@ -107,6 +114,7 @@ export class AuthService {
   async signOut(): Promise<void> {
     if (!this.supabase.isConfigured()) {
       this.sessionSignal.set(null);
+      this.userStore.clear();
       return;
     }
 
@@ -116,5 +124,6 @@ export class AuthService {
       throw error;
     }
     this.sessionSignal.set(null);
+    this.userStore.clear();
   }
 }

@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
 import { SafeHtml } from '@angular/platform-browser';
+
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-marketing-landing',
@@ -14,6 +16,7 @@ export class MarketingLandingPage {
   private title = inject(Title);
   private meta = inject(Meta);
   private sanitizer = inject(DomSanitizer);
+  private readonly userService = inject(UserService);
 
   features = [
     {
@@ -50,6 +53,12 @@ export class MarketingLandingPage {
   private readonly peakSalesAmount = this.salesTrend.reduce((max, point) => Math.max(max, point.amount), 0);
 
   schemaMarkup: SafeHtml;
+  readonly user = this.userService.user();
+  readonly greeting = computed(() => {
+    const user = this.user();
+    const displayName = user?.fullName?.trim() || user?.email || null;
+    return displayName ? `Hi ${displayName}, welcome back to Hassib.` : 'Hi there, welcome to Hassib.';
+  });
 
   constructor() {
     this.title.setTitle('Hassib POS | Cloud Retail Platform for Modern Stores');
