@@ -89,24 +89,37 @@ export class SalesPage {
     return Math.round((value + Number.EPSILON) * 100) / 100;
   }
 
- private async persistSales(lines: Line[], payment: Payment, phone: string): Promise<void> {
-  try {
-    const order = await this.sales.recordReceipt({
-      lines,
-      payment,
-      customerPhone: phone,
-    });
+  private async persistSales(originalLines: Line[], payment: Payment, phone: string): Promise<void> {
+    let processedLines = originalLines;
 
-    if (order) {
-      await this.inventory.recordSale(lines, order);
-    } else {
-      console.warn('No se pudo registrar el recibo: order es null');
+    try {
+      const order = await this.sales.recordReceipt({
+        lines: originalLines,
+        payment,
+        customerPhone: phone,
+      });
+
+      if (order) {
+        processedLines = originalLines.map(line => ({ ...line, saleId: order.id }));
+
+        this.lines.update(prev =>
+          prev.map(item => {
+            const index = originalLines.indexOf(item);
+            return index !== -1 ? processedLines[index] : item;
+          })
+        );
+
+        this.receipts.update(prev =>
+          prev.map(receipt => (receipt === originalLines ? processedLines : receipt))
+        );
+      }
+
+      await this.inventory.recordSale(processedLines, order ?? undefined);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to record sale in Supabase.';
+      console.error(message, error);
+      alert(message);
     }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Failed to record sale in Supabase.';
-    console.error(message, error);
-    alert(message);
   }
-}
 
 }
