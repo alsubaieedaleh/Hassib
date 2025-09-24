@@ -1,15 +1,68 @@
-<!-- nav.component.html -->
-<nav class="nav flex gap-4 items-center justify-center bg-white border-b border-gray-200 px-6 py-4 shadow-sm">
-  @for (link of navLinks; track link.route) {
-    <a
-      [routerLink]="link.route"
-      routerLinkActive="text-green-600 font-semibold"
-      class="text-gray-600 hover:text-green-600 transition text-sm flex items-center gap-2"
-    >
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-        <path [attr.d]="link.iconPath" />
-      </svg>
-      {{ link.label }}
+<nav class="top-nav" aria-label="Primary">
+  <div class="nav-inner">
+    <a class="brand" routerLink="/" (click)="closeMenu()">
+      <span class="brand-mark" aria-hidden="true">H</span>
+      <span class="brand-text">
+        <span class="brand-title">Hassib</span>
+        <span class="brand-subtitle">Retail OS Suite</span>
+      </span>
     </a>
+
+    <button
+      class="menu-toggle"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="menuOpen()"
+      aria-controls="primary-navigation"
+    >
+      <span class="sr-only">Toggle navigation</span>
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke-width="1.5" stroke-linecap="round" />
+      </svg>
+    </button>
+
+    <div class="nav-links" [class.open]="menuOpen()" id="primary-navigation">
+      <div class="nav-link-group">
+        @for (link of navLinks; track link.route) {
+          <a
+            class="nav-link"
+            [routerLink]="link.route"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
+            (click)="closeMenu()"
+          >
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                [attr.d]="link.iconPath"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>{{ link.label }}</span>
+          </a>
+        }
+      </div>
+      <button
+        type="button"
+        class="sign-out"
+        (click)="signOut()"
+        [disabled]="signingOut()"
+      >
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path
+            d="M16 17l5-5-5-5M21 12H9M12 19a7 7 0 110-14"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>{{ signingOut() ? 'Signing Out…' : 'Sign Out' }}</span>
+      </button>
+    </div>
+  </div>
+
+  @if (signOutError()) {
+    <p class="sign-out-error" role="status">{{ signOutError() }}</p>
   }
 </nav>
