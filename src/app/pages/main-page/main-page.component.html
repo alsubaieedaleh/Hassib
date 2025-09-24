@@ -1,0 +1,327 @@
+<div class="mx-auto max-w-6xl space-y-12 px-4 py-12 lg:space-y-16">
+  <!-- Hero -->
+  <section class="overflow-hidden rounded-3xl border border-slate-800/30 bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 text-slate-100 shadow-xl">
+    <div class="flex flex-col gap-10 px-6 py-10 lg:flex-row lg:items-center lg:px-12 lg:py-14">
+      <div class="max-w-xl space-y-6">
+        <span class="inline-flex items-center gap-2 rounded-full border border-teal-500/30 bg-teal-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-teal-100">
+          Retail control center
+        </span>
+        <h1 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl">
+          Welcome to POS &amp; Inventory Hub
+        </h1>
+        <p class="text-lg text-slate-300">
+          Fast tools for cashiers, clear insights for accountants — everything synced for the next customer in line.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <a routerLink="/sales"
+             class="inline-flex items-center justify-center rounded-full bg-teal-800 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-900/40 transition hover:-translate-y-0.5 hover:bg-teal-700">
+            Open Sales
+          </a>
+          <a routerLink="/storage"
+             class="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:-translate-y-0.5 hover:border-teal-300 hover:text-white">
+            Manage Storage
+          </a>
+        </div>
+
+        <ul class="hero-highlights">
+          <li>Realtime VAT, margin, and payment helpers</li>
+          <li>Offline-first storage with instant exports</li>
+          <li>Optimised for tablets, phones, and desktop</li>
+        </ul>
+      </div>
+
+      <div class="grid w-full gap-4 sm:grid-cols-2">
+        @for (kpi of kpis(); track kpi.label) {
+          <div class="rounded-2xl border border-white/10 bg-white/10 px-6 py-5 backdrop-blur">
+            <div class="text-xs font-semibold uppercase tracking-wide text-teal-200">{{ kpi.label }}</div>
+            <div class="mt-2 text-2xl font-semibold text-white">{{ kpi.value() }}</div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Tools Grid -->
+  <main class="grid gap-6 lg:grid-cols-2">
+    <!-- VAT Calculator -->
+    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">VAT Calculator</h2>
+          <p class="mt-1 text-sm text-slate-600">Convert between Net and Gross including/excluding VAT.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-6">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-slate-700">Mode</label>
+          <div class="inline-flex items-center gap-1 rounded-full bg-slate-100 p-1 text-sm font-semibold text-slate-600">
+            <button type="button"
+                    class="inline-flex items-center rounded-full px-4 py-2 transition"
+                    [class.bg-white]="mode()==='net'"
+                    [class.text-slate-900]="mode()==='net'"
+                    [class.shadow]="mode()==='net'"
+                    (click)="setMode('net')">
+              Net → Gross
+            </button>
+            <button type="button"
+                    class="inline-flex items-center rounded-full px-4 py-2 transition"
+                    [class.bg-white]="mode()==='gross'"
+                    [class.text-slate-900]="mode()==='gross'"
+                    [class.shadow]="mode()==='gross'"
+                    (click)="setMode('gross')">
+              Gross → Net
+            </button>
+          </div>
+        </div>
+
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Amount</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="amount()"
+                   (input)="amount.set(num($event))" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">VAT %</label>
+            <input type="number" min="0" step="0.1"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="vatRate()"
+                   (input)="vatRate.set(num($event))" />
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3">
+          @for (r of vatResults(); track r.label) {
+            <div class="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+              <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ r.label }}</div>
+              <div class="mt-2 text-lg font-semibold text-slate-900">{{ r.value() }}</div>
+            </div>
+          }
+        </div>
+      </div>
+     </section>
+
+    <!-- Change Helper -->
+    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Change Helper</h2>
+          <p class="mt-1 text-sm text-slate-600">Quickly compute the customer’s change and notes breakdown.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-6">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Amount Due</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="due()"
+                   (input)="due.set(num($event))" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Amount Paid</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="paid()"
+                   (input)="paid.set(num($event))" />
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="rounded-xl border border-teal-200 bg-teal-50 px-4 py-4">
+            <div class="text-xs font-semibold uppercase tracking-wide text-teal-800/80">Change</div>
+            <div class="mt-2 text-2xl font-semibold text-teal-900">SAR {{ change().toFixed(2) }}</div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          @for (b of changeBreakdown(); track $index) {
+            <div class="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-sm font-medium text-slate-700">
+              {{ b.count }} × {{ b.denom }}
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Margin / Markup -->
+    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Margin &amp; Markup</h2>
+          <p class="mt-1 text-sm text-slate-600">Check profitability instantly.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-6">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Cost (SAR)</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="cost()"
+                   (input)="cost.set(num($event))" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Price (SAR)</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="price()"
+                   (input)="price.set(num($event))" />
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-3">
+          @for (r of marginResults(); track r.label) {
+            <div class="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+              <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ r.label }}</div>
+              <div class="mt-2 text-lg font-semibold text-slate-900">{{ r.value() }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Split Payments -->
+    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Split Payments</h2>
+          <p class="mt-1 text-sm text-slate-600">Distribute a total across payment methods.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-6">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Total (SAR)</label>
+            <input type="number" min="0" step="0.01"
+                   class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                   [value]="totalToSplit()"
+                   (input)="totalToSplit.set(num($event))" />
+          </div>
+          <div class="space-y-2">
+            <label class="text-sm font-semibold text-slate-700">Ratios (sum any values)</label>
+            <div class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+              @for (f of splitFields; track f.key) {
+                <div class="grid grid-cols-[1fr_auto] items-center gap-3">
+                  <span class="text-sm font-semibold text-slate-700">{{ f.label }}</span>
+                  <input type="number" min="0" step="1"
+                         class="w-24 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                         [value]="split()[f.key]"
+                         (input)="setSplit(f.key, num($event))" />
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          @for (r of splitResults(); track r.label) {
+            <div class="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3">
+              <div class="text-xs font-semibold uppercase tracking-wide text-slate-500">{{ r.label }}</div>
+              <div class="mt-2 text-lg font-semibold text-slate-900">{{ r.value() }}</div>
+            </div>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- Barcode Lookup -->
+    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Barcode Lookup</h2>
+          <p class="mt-1 text-sm text-slate-600">Search a product stored in inventory by barcode.</p>
+        </div>
+      </div>
+
+      <div class="mt-6 space-y-6">
+        <div class="space-y-2">
+          <label class="text-sm font-semibold text-slate-700">Barcode</label>
+          <input placeholder="Scan or type barcode..."
+                 class="block w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-900 shadow-sm outline-none transition focus:border-teal-500 focus:ring-4 focus:ring-teal-500/20"
+                 [value]="queryBarcode()"
+                 (input)="onBarcodeInput($event)" />
+        </div>
+
+        @if (foundProduct(); as p) {
+          <div class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+            <div class="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-slate-700">
+              <div class="font-semibold text-slate-600">Barcode</div>
+              <div class="text-slate-500">{{ p.barcode }}</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-slate-700">
+              <div class="font-semibold text-slate-600">Name</div>
+              <div class="font-semibold text-slate-900">{{ p.name }}</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-slate-700">
+              <div class="font-semibold text-slate-600">Qty</div>
+              <div>{{ p.qty }}</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-slate-700">
+              <div class="font-semibold text-slate-600">Cost</div>
+              <div>SAR {{ p.cost.toFixed(2) }}</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] items-center gap-3 text-sm text-slate-700">
+              <div class="font-semibold text-slate-600">Price</div>
+              <div class="font-semibold text-slate-900">SAR {{ p.price.toFixed(2) }}</div>
+            </div>
+
+            <div class="flex flex-wrap gap-3 pt-2">
+              <a routerLink="/sales"
+                 class="inline-flex items-center justify-center rounded-full bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-teal-700">
+                Sell This Item
+              </a>
+              <a routerLink="/storage"
+                 class="inline-flex items-center justify-center rounded-full border border-slate-300 px-5 py-2.5 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+                Open Storage
+              </a>
+            </div>
+          </div>
+        } @else {
+          <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50/40 px-4 py-6 text-sm text-slate-600">
+            <div>No product selected or not found.</div>
+            <div class="mt-3">
+              <a routerLink="/storage"
+                 class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+                Add to Storage
+              </a>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  </main>
+
+  <!-- Quick Links -->
+  <section class="rounded-3xl border border-slate-200/80 bg-white/80 p-6 shadow-sm backdrop-blur-sm">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h2 class="text-lg font-semibold text-slate-900">Quick Actions</h2>
+        <p class="text-sm text-slate-600">Jump straight into the tools your frontline teams need most.</p>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <a routerLink="/sales"
+           class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+          New Sale
+        </a>
+        <a routerLink="/storage"
+           class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+          Import Inventory
+        </a>
+        <a routerLink="/storage"
+           class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+          Manage Products
+        </a>
+        <a routerLink="/sales"
+           class="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:-translate-y-0.5 hover:border-teal-400 hover:text-teal-800">
+          Session Summary
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
