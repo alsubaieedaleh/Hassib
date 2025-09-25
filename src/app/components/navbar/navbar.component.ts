@@ -25,16 +25,19 @@ export class NavComponent {
       label: 'Landing',
       route: '/landing',
       iconPath: 'M4 5h16v4H4zM4 11h10v4H4zM4 17h16v2H4z',
+      exact: false,
     },
     {
       label: 'Sales',
       route: '/sales',
       iconPath: 'M4 4h16v4H4zM4 10h16v10H4z',
+      exact: false,
     },
     {
       label: 'Storage',
       route: '/storage',
       iconPath: 'M3 7l9-4 9 4v13a2 2 0 01-2 2H5a2 2 0 01-2-2z',
+      exact: false,
     },
   ] as const;
 
