@@ -65,7 +65,7 @@ export class LoginPageComponent {
       await this.auth.signIn(email, password);
       this.successMessage.set('Signed in successfully. You can proceed to your dashboard.');
       const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-      const target = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/sales';
+      const target = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/dashboard';
       void this.router.navigate([target]);
     } catch (error) {
       // Error state already captured by the auth service; nothing else required.

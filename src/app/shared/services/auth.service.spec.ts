@@ -95,6 +95,22 @@ describe('AuthService', () => {
     expect(userStore.snapshot.roles).toContain('user');
   });
 
+  it('provides a helpful message when credentials are invalid', async () => {
+    const invalidCredentialsError = Object.assign(new Error('Invalid login credentials'), { status: 400 });
+    supabaseClientMock.auth.signInWithPassword.mockResolvedValue({
+      data: {},
+      error: invalidCredentialsError,
+    });
+
+    await expect(service.signIn('demo@example.com', 'wrong-password')).rejects.toThrow(
+      'Invalid email or password. Please check your credentials or reset your password.',
+    );
+
+    expect(userStore.snapshot.error).toBe(
+      'Invalid email or password. Please check your credentials or reset your password.',
+    );
+  });
+
   it('clears the session after sign out', async () => {
     userStore.setSession(createSession());
 

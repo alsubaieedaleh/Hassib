@@ -1,6 +1,6 @@
 <nav class="top-nav" aria-label="Primary">
   <div class="nav-inner">
-    <a class="brand" routerLink="/" (click)="closeMenu()">
+    <a class="brand" routerLink="/dashboard" (click)="closeMenu()">
       <span class="brand-mark" aria-hidden="true">H</span>
       <span class="brand-text">
         <span class="brand-title">Hassib</span>
@@ -30,7 +30,7 @@
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
             (click)="closeMenu()"
-            [attr.aria-disabled]="!isAuthenticated() && link.route !== '/' && link.route !== '/landing' ? true : null"
+            [attr.aria-disabled]="!isAuthenticated() && link.route !== '/dashboard' ? true : null"
           >
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path

@@ -130,7 +130,17 @@ export class AuthService {
       }
       await this.refreshSession();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unable to sign in with Supabase.';
+      let message = error instanceof Error ? error.message : 'Unable to sign in with Supabase.';
+
+      if (error && typeof error === 'object' && 'status' in error) {
+        const status = Number((error as { status?: number }).status ?? NaN);
+        if (status === 400) {
+          message = 'Invalid email or password. Please check your credentials or reset your password.';
+        } else if (status >= 500) {
+          message = 'Supabase authentication is temporarily unavailable. Please try again shortly.';
+        }
+      }
+
       this.errorSignal.set(message);
       this.userStore.setError(message);
       throw new Error(message);

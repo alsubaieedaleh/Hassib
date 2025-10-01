@@ -8,11 +8,11 @@ import { AuthState, UserStoreService } from '../services/user-store.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
-  let navigateUrl: string | undefined;
+  let createdTree: { commands: any[]; extras?: any } | undefined;
   let state$: Subject<AuthState>;
 
   beforeEach(() => {
-    navigateUrl = undefined;
+    createdTree = undefined;
     state$ = new Subject<AuthState>();
 
     const authServiceMock = { restoreSession: jest.fn().mockResolvedValue(undefined) };
@@ -30,9 +30,10 @@ describe('AuthGuard', () => {
         {
           provide: Router,
           useValue: {
-            createUrlTree: jest.fn().mockImplementation(url => {
-              navigateUrl = Array.isArray(url) ? url.join('/') : url;
-              return `tree:${navigateUrl}`;
+            createUrlTree: jest.fn().mockImplementation((commands: any[], extras?: any) => {
+              createdTree = { commands, extras };
+              const joined = Array.isArray(commands) ? commands.join('/') : String(commands);
+              return `tree:${joined}`;
             }),
           },
         },
@@ -51,7 +52,8 @@ describe('AuthGuard', () => {
 
     const result = await resultPromise;
     expect(result).toBe('tree:/login');
-    expect(navigateUrl).toBe('/login');
+    expect(createdTree?.commands).toEqual(['/login']);
+    expect(createdTree?.extras?.queryParams?.returnUrl).toBe('/secure');
   });
 
   it('blocks access when required roles are missing', async () => {
@@ -72,8 +74,8 @@ describe('AuthGuard', () => {
     });
 
     const result = await resultPromise;
-    expect(result).toBe('tree:/');
-    expect(navigateUrl).toBe('/');
+    expect(result).toBe('tree:/dashboard');
+    expect(createdTree?.commands).toEqual(['/dashboard']);
   });
 
   it('allows access for authenticated users with a matching role', async () => {
@@ -92,5 +94,18 @@ describe('AuthGuard', () => {
 
     const result = await resultPromise;
     expect(result).toBe(true);
+  });
+
+  it('redirects via canActivateChild when the user is not authenticated', async () => {
+    const resultPromise = firstValueFrom(
+      guard.canActivateChild({ data: {} } as any, { url: '/storage' } as any),
+    );
+
+    state$.next({ status: 'unauthenticated', session: null, user: null, roles: [], error: null });
+
+    const result = await resultPromise;
+    expect(result).toBe('tree:/login');
+    expect(createdTree?.commands).toEqual(['/login']);
+    expect(createdTree?.extras?.queryParams?.returnUrl).toBe('/storage');
   });
 });
