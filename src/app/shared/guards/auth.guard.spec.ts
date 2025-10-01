@@ -56,13 +56,16 @@ describe('AuthGuard', () => {
     expect(createdTree?.extras?.queryParams?.returnUrl).toBe('/secure');
   });
 
-  it('blocks access when required roles are missing', async () => {
+  it('blocks access when required roles are missing for restricted routes', async () => {
     const userStore = TestBed.inject(UserStoreService) as any;
     userStore.hasRequiredRole.mockReturnValue(false);
 
     const session: any = { user: { id: 'user-1' } };
     const resultPromise = firstValueFrom(
-      guard.canActivate({ data: { roles: ['admin'] } } as any, { url: '/admin' } as any),
+      guard.canActivate(
+        { data: { roles: ['admin'] }, routeConfig: { path: 'admin' } } as any,
+        { url: '/admin' } as any,
+      ),
     );
 
     state$.next({
@@ -81,7 +84,10 @@ describe('AuthGuard', () => {
   it('allows access for authenticated users with a matching role', async () => {
     const session: any = { user: { id: 'user-1' } };
     const resultPromise = firstValueFrom(
-      guard.canActivate({ data: { roles: ['user'] } } as any, { url: '/sales' } as any),
+      guard.canActivate(
+        { data: { roles: ['user'] }, routeConfig: { path: 'sales' } } as any,
+        { url: '/sales' } as any,
+      ),
     );
 
     state$.next({
@@ -94,6 +100,39 @@ describe('AuthGuard', () => {
 
     const result = await resultPromise;
     expect(result).toBe(true);
+  });
+
+  it('allows access to dashboard, sales, and storage regardless of roles', async () => {
+    const userStore = TestBed.inject(UserStoreService) as any;
+    userStore.hasRequiredRole.mockReturnValue(false);
+
+    const session: any = { user: { id: 'user-1' } };
+
+    const makeRoute = (path: string) => ({ data: { roles: ['admin'] }, routeConfig: { path } });
+
+    const dashboardResultPromise = firstValueFrom(
+      guard.canActivate(makeRoute('dashboard') as any, { url: '/dashboard' } as any),
+    );
+    const salesResultPromise = firstValueFrom(
+      guard.canActivate(makeRoute('sales') as any, { url: '/sales' } as any),
+    );
+    const storageResultPromise = firstValueFrom(
+      guard.canActivate(makeRoute('storage') as any, { url: '/storage' } as any),
+    );
+
+    const authState = {
+      status: 'authenticated' as const,
+      session,
+      user: { id: 'user-1', email: 'demo@example.com' },
+      roles: ['user'],
+      error: null,
+    };
+
+    state$.next(authState);
+
+    expect(await dashboardResultPromise).toBe(true);
+    expect(await salesResultPromise).toBe(true);
+    expect(await storageResultPromise).toBe(true);
   });
 
   it('redirects via canActivateChild when the user is not authenticated', async () => {

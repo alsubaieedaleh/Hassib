@@ -1,7 +1,9 @@
+  
 <section class="relative overflow-hidden bg-slate-950 text-white">
   <div class="absolute inset-x-0 top-0 -z-10 h-[420px] bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-transparent"></div>
   <div class="relative mx-auto flex max-w-6xl flex-col gap-16 px-4 pb-20 pt-10 sm:px-6 lg:px-8 lg:pt-16">
     <header class="flex flex-col items-start justify-between gap-6 rounded-3xl border border-white/10 bg-white/5 p-6 sm:flex-row sm:items-center">
+ 
       <a routerLink="/" class="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.3em] text-white/80">
         <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-400/20 text-teal-200">H</span>
         Hassib
@@ -28,7 +30,8 @@
     </header>
 
     <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-start">
-      <div class="space-y-8 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out motion-safe:will-change-transform">
+       <div class="space-y-8 motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out motion-safe:will-change-transform">
+ 
         <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-teal-200">
           VAT cockpit for traders & retailers
         </span>
@@ -65,11 +68,13 @@
         </div>
       </div>
 
-      <div class="grid gap-6 motion-safe:transition-opacity motion-safe:duration-300">
+       <div class="grid gap-6 motion-safe:transition-opacity motion-safe:duration-300">
+ 
         <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-black/20">
           <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
             <span>VAT SUMMARY</span>
             <span>{{ jurisdictionLabel() }}</span>
+ 
           </div>
           <div class="mt-6 grid gap-4 sm:grid-cols-3">
             <div class="rounded-2xl bg-white/10 p-4">
@@ -100,7 +105,8 @@
           </div>
         </div>
 
-        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20">
+         <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20">
+ 
           <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
             <span>MARKET TICKER</span>
             <span>Updated live</span>
@@ -124,7 +130,7 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
       <div class="flex items-center gap-3 bg-white/10 px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
         <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
@@ -289,11 +295,12 @@
           }
         </div>
       </article>
+ 
     </div>
   </div>
 </section>
 
-<section id="features" class="bg-white py-20 px-4 lg:px-8">
+ <section id="features" class="bg-white py-20 px-4 lg:px-8">
   <div class="mx-auto max-w-6xl">
     <div class="max-w-3xl">
       <h2 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">Features built for speed and scale</h2>
@@ -352,11 +359,12 @@
           Built-in VAT automation workflows reduce manual reconciliation by 70% for pilot traders.
         </li>
       </ul>
+ 
     </div>
   </div>
 </section>
 
-<section id="faq" class="bg-slate-50 py-20 px-4 lg:px-8">
+ <section id="faq" class="bg-slate-50 py-20 px-4 lg:px-8">
   <div class="mx-auto max-w-6xl">
     <div class="max-w-3xl">
       <span class="inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-teal-900">FAQ</span>
@@ -377,6 +385,7 @@
       <div>
         <p class="text-xl font-semibold text-slate-900">Need a personalised VAT roadmap?</p>
         <p class="mt-2 text-sm text-slate-600">Share your jurisdiction mix and we will assemble benchmarks, filing cadences and market data for your trading vertical.</p>
+ 
       </div>
       <a
         routerLink="/sign-up"
@@ -384,6 +393,27 @@
       >
         Request consultation deck
       </a>
+    </div>
+    <div class="rounded-3xl border border-white/10 bg-gradient-to-br from-white/10 via-white/5 to-transparent p-8 shadow-2xl shadow-black/40">
+      <h3 class="text-lg font-semibold text-white">Why teams trust Hassib</h3>
+      <ul class="mt-4 space-y-3 text-sm leading-relaxed text-white/70">
+        <li class="flex gap-3">
+          <span class="mt-1 h-2 w-2 rounded-full bg-teal-300"></span>
+          SSR-first Angular architecture ensures content is crawlable and fast for SEO.
+        </li>
+        <li class="flex gap-3">
+          <span class="mt-1 h-2 w-2 rounded-full bg-teal-300"></span>
+          Tailwind tokens mirror the rest of the app, ensuring cohesive UI across modules.
+        </li>
+        <li class="flex gap-3">
+          <span class="mt-1 h-2 w-2 rounded-full bg-teal-300"></span>
+          Integrates with Supabase Auth, Functions and row-level security policies on day one.
+        </li>
+        <li class="flex gap-3">
+          <span class="mt-1 h-2 w-2 rounded-full bg-teal-300"></span>
+          Built-in VAT automation workflows reduce manual reconciliation by 70% for pilot traders.
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -419,7 +449,8 @@
       <a class="transition hover:text-white" href="#tools">Tools</a>
       <a class="transition hover:text-white" href="#features">Features</a>
       <a class="transition hover:text-white" href="#about">About</a>
-      <a class="transition hover:text-white" href="#faq">FAQ</a>
+       <a class="transition hover:text-white" href="#faq">FAQ</a>
+ 
       <a class="transition hover:text-white" href="#contact">Contact</a>
     </nav>
   </div>

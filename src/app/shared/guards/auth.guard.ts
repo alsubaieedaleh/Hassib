@@ -52,6 +52,10 @@ export class AuthGuard implements CanActivate, CanActivateChild {
           });
         }
 
+        if (this.isAlwaysAccessibleRoute(route)) {
+          return true;
+        }
+
         if (!this.userStore.hasRequiredRole(requiredRoles)) {
           return this.router.createUrlTree(['/dashboard']);
         }
@@ -59,5 +63,14 @@ export class AuthGuard implements CanActivate, CanActivateChild {
         return true;
       }),
     );
+  }
+
+  private isAlwaysAccessibleRoute(route: ActivatedRouteSnapshot): boolean {
+    const path = route.routeConfig?.path;
+    if (!path) {
+      return false;
+    }
+
+    return ['dashboard', 'sales', 'storage'].includes(path);
   }
 }

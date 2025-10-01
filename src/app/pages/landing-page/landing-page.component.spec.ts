@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
-import { DOCUMENT } from '@angular/common';
+ import { DOCUMENT } from '@angular/common';
+ 
 import { Meta } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
@@ -61,7 +62,7 @@ describe('LandingPageComponent', () => {
     expect(meta.getTag("name='description'")).toBeTruthy();
     expect(meta.getTag("property='og:title'")).toBeTruthy();
   });
-
+ 
   it('exposes canonical link and structured data for crawlers', () => {
     const documentRef = TestBed.inject(DOCUMENT);
     const canonical = documentRef.querySelector("link[rel='canonical']");
@@ -73,4 +74,5 @@ describe('LandingPageComponent', () => {
     expect(Array.isArray(faqSchema!['mainEntity'])).toBe(true);
     expect((faqSchema!['mainEntity'] as Array<unknown>).length).toBeGreaterThan(0);
   });
+ 
 });

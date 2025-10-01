@@ -1,5 +1,6 @@
-import {
-  ChangeDetectionStrategy,
+ 
+ import {
+   ChangeDetectionStrategy,
   Component,
   OnDestroy,
   OnInit,
@@ -7,27 +8,51 @@ import {
   inject,
   signal
 } from '@angular/core';
-import { CommonModule, DOCUMENT } from '@angular/common';
+ import { CommonModule, DOCUMENT } from '@angular/common';
+  
+ 
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
 import { SafeHtml } from '@angular/platform-browser';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { auditTime, startWith } from 'rxjs';
+ import { auditTime, startWith } from 'rxjs';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 
-@Component({
+ 
+ 
+import { animate, style, transition, trigger } from '@angular/animations';
+import { Subscription } from 'rxjs';
+ 
+ @Component({
   selector: 'app-landing-page',
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './landing-page.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LandingPageComponent implements OnInit, OnDestroy {
+    changeDetection: ChangeDetectionStrategy.OnPush
+ 
+  animations: [
+    trigger('fadeInUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(16px)' }),
+        animate('320ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ]),
+    trigger('tickerChange', [
+      transition('* => *', [
+        style({ opacity: 0, transform: 'translateY(8px)' }),
+        animate('260ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
+ })
+ export class LandingPageComponent implements OnInit, OnDestroy {
   private title = inject(Title);
   private meta = inject(Meta);
   private sanitizer = inject(DomSanitizer);
   private fb = inject(FormBuilder);
-  private document = inject(DOCUMENT);
+   private document = inject(DOCUMENT);
 
   private tickerTimer?: ReturnType<typeof setInterval>;
 
@@ -39,6 +64,20 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     { label: 'Contact', href: '#contact' }
   ];
 
+ 
+
+   private subscriptions = new Subscription();
+ 
+  private tickerTimer?: ReturnType<typeof setInterval>;
+
+  readonly navSections = [
+    { label: 'Tools', href: '#tools' },
+    { label: 'Features', href: '#features' },
+    { label: 'About', href: '#about' },
+    { label: 'Contact', href: '#contact' }
+  ];
+
+ 
   readonly heroHighlights = [
     'Realtime reconciliation for commodity, FX and local sales',
     'Consolidated VAT dashboards across markets and branches',
@@ -83,7 +122,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       title: 'Approval workflows',
       description: 'Route VAT overrides and discount approvals to finance leads with real-time audit trails.'
     }
-  ];
+   ];
 
   readonly faqItems = [
     {
@@ -106,6 +145,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       answer:
         'Scheduled CSV, XLSX and Supabase function exports are available out of the box, giving auditors snapshots of VAT due, provisioning schedules and compliance checks in a single workspace.'
     }
+ 
   ];
 
   private tickerData = signal(
@@ -131,8 +171,9 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     country: ['sa', Validators.required]
   });
 
-  private readonly vatCalculatorState = toSignal(
-    this.vatCalculatorForm.valueChanges.pipe(startWith(this.vatCalculatorForm.value), auditTime(50)),
+ 
+   private readonly vatCalculatorState = toSignal(
+     this.vatCalculatorForm.valueChanges.pipe(startWith(this.vatCalculatorForm.value), auditTime(50)),
     { initialValue: this.vatCalculatorForm.value }
   );
 
@@ -158,7 +199,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   readonly jurisdictionLabel = computed(() =>
     (this.vatCalculatorState()?.jurisdiction ?? 'sa').toString().toUpperCase()
   );
-
+ 
   readonly vatCheckerStatus = signal<{ state: 'idle' | 'valid' | 'invalid'; message: string }>({
     state: 'idle',
     message: ''
@@ -170,7 +211,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   structuredDataJson = '';
 
   constructor() {
-    const canonicalUrl = 'https://app.hassib.dev/landing';
+     const canonicalUrl = 'https://app.hassib.dev/landing';
 
     this.title.setTitle('Hassib VAT Suite | GCC Trader Compliance & POS Platform');
 
@@ -365,6 +406,68 @@ export class LandingPageComponent implements OnInit, OnDestroy {
         { '@type': 'ListItem', position: 4, name: 'Features', item: `${canonicalUrl}#features` },
         { '@type': 'ListItem', position: 5, name: 'FAQ', item: `${canonicalUrl}#faq` }
       ]
+ 
+    this.title.setTitle('Hassib POS | Cloud Retail Platform for Modern Stores');
+    this.meta.addTags([
+      { name: 'description', content: 'Hassib gives retail teams a fast POS, real-time inventory analytics and ready-to-connect Supabase authentication.' },
+      {
+        name: 'keywords',
+        content: 'Hassib POS, GCC VAT tools, trader dashboard, Supabase Angular, retail trading platform, VAT calculator'
+      },
+      { property: 'og:title', content: 'Hassib POS – Retail operations in one place' },
+      { property: 'og:description', content: 'Launch a modern POS with inventory management, VAT tools and Supabase-ready authentication.' },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:url', content: 'https://app.hassib.dev/landing' },
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: 'Hassib POS | Modern Retail HQ' },
+      { name: 'twitter:description', content: 'From sales to storage—Hassib centralises everything for ambitious retailers.' },
+      { name: 'robots', content: 'index, follow' },
+      { name: 'author', content: 'Hassib' }
+    ], true);
+
+    this.vatCheckerForm.valueChanges
+      .pipe(startWith(this.vatCheckerForm.value), auditTime(0), takeUntilDestroyed())
+      .subscribe(() => {
+        if (this.vatCheckerStatus().state !== 'idle') {
+          this.vatCheckerStatus.set({ state: 'idle', message: '' });
+        }
+      });
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'WebPage',
+      name: 'Hassib POS VAT & Trading Platform',
+      url: 'https://app.hassib.dev/landing',
+      description:
+        'Modern Angular VAT tooling, live trader dashboards and Supabase ready integrations for GCC retailers and trading desks.',
+      inLanguage: 'en',
+      publisher: {
+        '@type': 'Organization',
+        name: 'Hassib',
+        url: 'https://app.hassib.dev'
+      },
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: 'https://app.hassib.dev/assets/og-image.png'
+      },
+      mainEntity: {
+        '@type': 'SoftwareApplication',
+        name: 'Hassib VAT Suite',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD'
+        },
+        featureList: this.features.map(feature => feature.title)
+      },
+      potentialAction: {
+        '@type': 'Action',
+        name: 'Book onboarding call',
+        target: 'https://app.hassib.dev/sign-up'
+      }
+ 
     };
 
     const faqSchema = {
@@ -381,6 +484,90 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     };
 
     return [webpageSchema, softwareSchema, breadcrumbSchema, faqSchema];
+  }
+ 
+  private rotateTicker(): void {
+    const items = this.tickerItems.map((item, index) => {
+      const previous = item.price;
+      const drift = (Math.random() - 0.5) * (index === 3 ? 600 : index === 4 ? 1.2 : 0.12);
+      const price = Number((previous + drift).toFixed(index === 3 ? 0 : 2));
+      const change = Number(((price - previous) / (previous || price) * 100).toFixed(2));
+      return {
+        ...item,
+        previous: price,
+        price,
+        change
+      };
+    });
+
+    this.tickerData.set(items);
+    this.tickerIndex.update(index => (index + 1) % items.length);
+ 
+  ngOnInit(): void {
+     this.tickerTimer = setInterval(() => {
+      this.rotateTicker();
+    }, 6000);
+  }
+
+  ngOnDestroy(): void {
+ 
+    if (this.tickerTimer) {
+      clearInterval(this.tickerTimer);
+    }
+  }
+
+  get tickerItems() {
+    return this.tickerData();
+  }
+
+  get currentTicker() {
+    const items = this.tickerItems;
+    return items[this.tickerIndex() % items.length];
+  }
+
+  onVatCheck(): void {
+    if (this.vatCheckerForm.invalid) {
+      this.vatCheckerStatus.set({ state: 'invalid', message: 'Enter a valid VAT/TRN number before checking.' });
+      return;
+    }
+
+    const value = this.vatCheckerForm.value;
+    const vatNumber = (value.vatNumber ?? '').toString().toUpperCase();
+    const checksum = Array.from(vatNumber).reduce((total, char, index) => {
+      const code = char.charCodeAt(0);
+      return total + ((index % 2 === 0 ? code * 3 : code * 7) % 97);
+    }, 0);
+
+    const isValid = checksum % 11 === 0;
+    this.vatCheckerStatus.set({
+      state: isValid ? 'valid' : 'invalid',
+      message: isValid
+        ? 'VAT registration pattern looks correct. Archive this check in your compliance log.'
+        : 'Number failed checksum heuristics. Double-check with the issuing authority.'
+    });
+  }
+
+  onJurisdictionChange(jurisdiction: string): void {
+    const presets: Record<string, number> = {
+      sa: 15,
+      ae: 5,
+      bh: 10,
+      kw: 0,
+      qa: 5
+    };
+
+    const vatRate = presets[jurisdiction] ?? (this.vatCalculatorForm.value.vatRate ?? 0);
+    this.vatCalculatorForm.patchValue({ vatRate }, { emitEvent: true });
+  }
+
+  provisionWidth(): number {
+    const summary = this.vatSummary();
+    if (!summary.vatDue) {
+      return 0;
+    }
+
+    const width = (summary.monthlyProvision / summary.vatDue) * 100;
+    return Math.min(100, Math.max(10, Number(width.toFixed(2))));
   }
 
   private rotateTicker(): void {
@@ -399,5 +586,26 @@ export class LandingPageComponent implements OnInit, OnDestroy {
 
     this.tickerData.set(items);
     this.tickerIndex.update(index => (index + 1) % items.length);
+ 
+  }
+
+  private updateVatSummary(): void {
+    const netAmount = Number(this.vatCalculatorForm.value.netAmount ?? 0);
+    const vatRate = Number(this.vatCalculatorForm.value.vatRate ?? 0);
+
+    const vatDue = Number(((netAmount * vatRate) / 100).toFixed(2));
+    const grossAmount = Number((netAmount + vatDue).toFixed(2));
+    const monthlyProvision = Number((vatDue / 3).toFixed(2));
+    const quarterlyProvision = Number((vatDue).toFixed(2));
+
+    this.vatSummary.set({
+      vatDue,
+      grossAmount,
+      netAmount,
+      monthlyProvision,
+      quarterlyProvision
+    });
+ 
+ 
   }
 }
