@@ -1,17 +1,29 @@
-import { Component, OnDestroy, OnInit, inject, signal } from '@angular/core';
+ import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  computed,
+  inject,
+  signal
+} from '@angular/core';
+ 
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
 import { SafeHtml } from '@angular/platform-browser';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+ 
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
-
+ 
 @Component({
   selector: 'app-landing-page',
   standalone: true,
   imports: [CommonModule, RouterLink, ReactiveFormsModule],
   templateUrl: './landing-page.component.html',
+   changeDetection: ChangeDetectionStrategy.OnPush
+ 
   animations: [
     trigger('fadeInUp', [
       transition(':enter', [
@@ -26,14 +38,15 @@ import { Subscription } from 'rxjs';
       ])
     ])
   ]
-})
+ })
 export class LandingPageComponent implements OnInit, OnDestroy {
   private title = inject(Title);
   private meta = inject(Meta);
   private sanitizer = inject(DomSanitizer);
   private fb = inject(FormBuilder);
 
-  private subscriptions = new Subscription();
+   private subscriptions = new Subscription();
+ 
   private tickerTimer?: ReturnType<typeof setInterval>;
 
   readonly navSections = [
@@ -112,14 +125,35 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     country: ['sa', Validators.required]
   });
 
-  readonly vatSummary = signal({
-    vatDue: 0,
-    grossAmount: 0,
-    netAmount: 0,
-    monthlyProvision: 0,
-    quarterlyProvision: 0
+   private readonly vatCalculatorState = toSignal(
+    this.vatCalculatorForm.valueChanges.pipe(startWith(this.vatCalculatorForm.value), auditTime(50)),
+    { initialValue: this.vatCalculatorForm.value }
+  );
+
+  readonly vatSummary = computed(() => {
+    const formValue = this.vatCalculatorState();
+    const netAmount = Number(formValue?.netAmount ?? 0);
+    const vatRate = Number(formValue?.vatRate ?? 0);
+
+    const vatDue = Number(((netAmount * vatRate) / 100).toFixed(2));
+    const grossAmount = Number((netAmount + vatDue).toFixed(2));
+    const monthlyProvision = Number((vatDue / 3).toFixed(2));
+    const quarterlyProvision = Number(vatDue.toFixed(2));
+
+    return {
+      vatDue,
+      grossAmount,
+      netAmount,
+      monthlyProvision,
+      quarterlyProvision
+    };
   });
 
+  readonly jurisdictionLabel = computed(() =>
+    (this.vatCalculatorState()?.jurisdiction ?? 'sa').toString().toUpperCase()
+  );
+
+ 
   readonly vatCheckerStatus = signal<{ state: 'idle' | 'valid' | 'invalid'; message: string }>({
     state: 'idle',
     message: ''
@@ -147,6 +181,14 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       { name: 'robots', content: 'index, follow' },
       { name: 'author', content: 'Hassib' }
     ], true);
+
+    this.vatCheckerForm.valueChanges
+      .pipe(startWith(this.vatCheckerForm.value), auditTime(0), takeUntilDestroyed())
+      .subscribe(() => {
+        if (this.vatCheckerStatus().state !== 'idle') {
+          this.vatCheckerStatus.set({ state: 'idle', message: '' });
+        }
+      });
 
     const schema = {
       '@context': 'https://schema.org',
@@ -188,28 +230,13 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.updateVatSummary();
-    this.subscriptions.add(
-      this.vatCalculatorForm.valueChanges.subscribe(() => {
-        this.updateVatSummary();
-      })
-    );
-
-    this.subscriptions.add(
-      this.vatCheckerForm.valueChanges.subscribe(() => {
-        if (this.vatCheckerStatus().state !== 'idle') {
-          this.vatCheckerStatus.set({ state: 'idle', message: '' });
-        }
-      })
-    );
-
-    this.tickerTimer = setInterval(() => {
+     this.tickerTimer = setInterval(() => {
       this.rotateTicker();
-    }, 4500);
+    }, 6000);
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+ 
     if (this.tickerTimer) {
       clearInterval(this.tickerTimer);
     }
@@ -285,6 +312,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
 
     this.tickerData.set(items);
     this.tickerIndex.update(index => (index + 1) % items.length);
+ 
   }
 
   private updateVatSummary(): void {
@@ -303,5 +331,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
       monthlyProvision,
       quarterlyProvision
     });
+ 
   }
 }
