@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Hassib App Icon</title>
+  <desc id="desc">Stylised letter H on a teal gradient background</desc>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12b8b6" />
+      <stop offset="100%" stop-color="#0c8d8c" />
+    </linearGradient>
+  </defs>
+  <rect x="32" y="32" width="448" height="448" rx="104" fill="url(#bg)" />
+  <path fill="#f9fafb" d="M168 140c-13.3 0-24 10.7-24 24v184c0 13.3 10.7 24 24 24h24c13.3 0 24-10.7 24-24v-56h80v56c0 13.3 10.7 24 24 24h24c13.3 0 24-10.7 24-24V164c0-13.3-10.7-24-24-24h-24c-13.3 0-24 10.7-24 24v56h-80v-56c0-13.3-10.7-24-24-24h-24z" />
+  <path fill="#ecfeff" opacity="0.6" d="M256 320l104 104H152z" />
+</svg>
