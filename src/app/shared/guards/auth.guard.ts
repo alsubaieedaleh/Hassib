@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
+  CanActivateChild,
   Router,
   RouterStateSnapshot,
   UrlTree,
@@ -13,12 +14,26 @@ import { AuthService } from '../services/auth.service';
 import { UserStoreService } from '../services/user-store.service';
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate, CanActivateChild {
   private readonly authService = inject(AuthService);
   private readonly userStore = inject(UserStoreService);
   private readonly router = inject(Router);
 
   canActivate(
+    route: ActivatedRouteSnapshot,
+    routerState: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> {
+    return this.evaluateAccess(route, routerState);
+  }
+
+  canActivateChild(
+    childRoute: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot,
+  ): Observable<boolean | UrlTree> {
+    return this.evaluateAccess(childRoute, state);
+  }
+
+  private evaluateAccess(
     route: ActivatedRouteSnapshot,
     routerState: RouterStateSnapshot,
   ): Observable<boolean | UrlTree> {
@@ -38,7 +53,7 @@ export class AuthGuard implements CanActivate {
         }
 
         if (!this.userStore.hasRequiredRole(requiredRoles)) {
-          return this.router.createUrlTree(['/']);
+          return this.router.createUrlTree(['/dashboard']);
         }
 
         return true;
