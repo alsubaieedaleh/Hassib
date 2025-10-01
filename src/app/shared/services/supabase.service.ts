@@ -35,7 +35,9 @@ export class SupabaseService {
           // throw when Zone.js intercepts the promise chain. The Hassib dashboard
           // runs in a single-tab context, so falling back to a no-op lock keeps
           // Supabase session management stable without noisy console errors.
-          lock: async (_name: string, _acquireTimeout: number, fn: () => Promise<unknown>) => await fn(),
+lock: async <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
+  return await fn();
+}
         },
       });
       this.configuredSignal.set(true);
