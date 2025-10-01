@@ -30,6 +30,7 @@
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: link.exact ?? false }"
             (click)="closeMenu()"
+            [attr.aria-disabled]="!isAuthenticated() && link.route !== '/' && link.route !== '/landing' ? true : null"
           >
             <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <path
@@ -43,22 +44,38 @@
           </a>
         }
       </div>
-      <button
-        type="button"
-        class="sign-out"
-        (click)="signOut()"
-        [disabled]="signingOut()"
-      >
-        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path
-            d="M16 17l5-5-5-5M21 12H9M12 19a7 7 0 110-14"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span>{{ signingOut() ? 'Signing Out…' : 'Sign Out' }}</span>
-      </button>
+
+      @if (isAuthenticated()) {
+        <div class="account-controls">
+          <span class="user-pill" aria-live="polite">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                d="M12 14c3.866 0 7 3.134 7 7H5c0-3.866 3.134-7 7-7zm0-2a4 4 0 100-8 4 4 0 000 8z"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>{{ userEmail() || 'Authenticated User' }}</span>
+          </span>
+          <button type="button" class="sign-out" (click)="signOut()" [disabled]="signingOut()">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path
+                d="M16 17l5-5-5-5M21 12H9M12 19a7 7 0 110-14"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span>{{ signingOut() ? 'Signing Out…' : 'Sign Out' }}</span>
+          </button>
+        </div>
+      } @else {
+        <div class="auth-links">
+          <a class="login" routerLink="/login" (click)="closeMenu()">Sign In</a>
+          <a class="register" routerLink="/sign-up" (click)="closeMenu()">Create account</a>
+        </div>
+      }
     </div>
   </div>
 

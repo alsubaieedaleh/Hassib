@@ -1,3 +1,25 @@
+export type AuthUser = {
+  id: string;
+  email?: string | null;
+  app_metadata?: Record<string, unknown>;
+  user_metadata?: Record<string, unknown>;
+  [key: string]: unknown;
+};
+
+export interface AuthSession {
+  user: AuthUser;
+  [key: string]: unknown;
+}
+
+export type AuthChangeEvent =
+  | 'SIGNED_IN'
+  | 'SIGNED_OUT'
+  | 'TOKEN_REFRESHED'
+  | 'USER_UPDATED'
+  | 'PASSWORD_RECOVERY';
+
+export type Session = AuthSession;
+
 export type SupabaseClient = any;
 
 export const createClient = (
