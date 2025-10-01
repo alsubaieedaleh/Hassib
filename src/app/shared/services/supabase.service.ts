@@ -31,6 +31,11 @@ export class SupabaseService {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
+          // Disable the experimental Navigator LockManager integration which can
+          // throw when Zone.js intercepts the promise chain. The Hassib dashboard
+          // runs in a single-tab context, so falling back to a no-op lock keeps
+          // Supabase session management stable without noisy console errors.
+          lock: async (_name: string, _acquireTimeout: number, fn: () => Promise<unknown>) => await fn(),
         },
       });
       this.configuredSignal.set(true);
