@@ -1,7 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { SupabaseService } from '../../shared/services/supabase.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+
+import { AuthService } from '../../shared/services/auth.service';
+import { UserStoreService } from '../../shared/services/user-store.service';
 
 @Component({
   selector: 'app-nav',
@@ -11,8 +14,16 @@ import { SupabaseService } from '../../shared/services/supabase.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavComponent {
-  private readonly supabase = inject(SupabaseService);
+  private readonly authService = inject(AuthService);
+  private readonly userStore = inject(UserStoreService);
   private readonly router = inject(Router);
+
+  readonly authState = toSignal(this.userStore.state$, {
+    initialValue: this.userStore.snapshot,
+  });
+
+  readonly isAuthenticated = computed(() => this.authState().status === 'authenticated');
+  readonly userEmail = computed(() => this.authState().user?.email ?? null);
 
   readonly navLinks = [
     {
@@ -54,7 +65,7 @@ export class NavComponent {
   }
 
   async signOut() {
-    if (this.signingOut()) {
+    if (this.signingOut() || !this.isAuthenticated()) {
       return;
     }
 
@@ -63,8 +74,7 @@ export class NavComponent {
 
     let success = false;
     try {
-      const client = this.supabase.ensureClient();
-      await client.auth.signOut();
+      await this.authService.signOut();
       success = true;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unable to sign out. Please try again.';

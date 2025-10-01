@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { AuthService } from '../../shared/services/auth.service';
@@ -15,6 +15,7 @@ export class LoginPageComponent {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   readonly form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -63,8 +64,9 @@ export class LoginPageComponent {
     try {
       await this.auth.signIn(email, password);
       this.successMessage.set('Signed in successfully. You can proceed to your dashboard.');
-      // Navigate to the sales workspace for convenience
-      void this.router.navigate(['/sales']);
+      const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
+      const target = returnUrl && returnUrl.startsWith('/') ? returnUrl : '/sales';
+      void this.router.navigate([target]);
     } catch (error) {
       // Error state already captured by the auth service; nothing else required.
       console.error('Failed to sign in with Supabase', error);

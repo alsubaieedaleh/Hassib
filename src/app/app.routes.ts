@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { AuthGuard } from './shared/guards/auth.guard';
+
 export const routes: Routes = [
   {
     path: '',
@@ -19,10 +21,14 @@ export const routes: Routes = [
   },
   {
     path: 'sales',
+    canActivate: [AuthGuard],
+    data: { roles: ['admin', 'user'] },
     loadComponent: () => import('./pages/sales-page/sales-page.component').then(m => m.SalesPage)
   },
   {
     path: 'storage',
+    canActivate: [AuthGuard],
+    data: { roles: ['admin'] },
     loadComponent: () => import('./pages/storage-page/storage-page.component').then(m => m.StoragePage)
   },
   {
