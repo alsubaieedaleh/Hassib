@@ -29,6 +29,7 @@ type MovementInsert = {
   location_id: number | null;
   change: number;
   reason: string;
+  user_id: string;
 };
 
 interface AddProductsOptions {
@@ -80,11 +81,20 @@ export class InventoryService {
 
     try {
       const client = this.supabase.ensureClient();
+      const userId = await this.supabase.getAuthenticatedUserId();
+
+      if (!userId) {
+        this.productsSignal.set([]);
+        this.loadingSignal.set(false);
+        return;
+      }
+
       const { data, error } = await client
         .from(this.table)
         .select(
           'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
         )
+        .eq('user_id', userId)
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -110,8 +120,9 @@ export class InventoryService {
       throw new Error('Supabase credentials are not configured.');
     }
 
-    const payload = newProducts.map(product => this.mapLineToInsertPayload(product, options.locationId));
     const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
+    const payload = newProducts.map(product => this.mapLineToInsertPayload(product, options.locationId, userId));
 
     const { data, error } = await client
       .from(this.table)
@@ -119,6 +130,7 @@ export class InventoryService {
       .select(
         'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
       )
+      .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -150,13 +162,18 @@ export class InventoryService {
       throw new Error('Supabase credentials are not configured.');
     }
 
+    const userId = await this.supabase.requireAuthenticatedUserId();
     const existing = this.productsSignal().find(line => line.id === id);
     if (!existing) {
       return;
     }
 
     const client = this.supabase.ensureClient();
-    const { error } = await client.from(this.table).delete().eq('id', id);
+    const { error } = await client
+      .from(this.table)
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
 
     if (error) {
       throw error;
@@ -202,6 +219,7 @@ export class InventoryService {
     }
 
     const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
     const products = this.productsSignal();
 
     const updates: {
@@ -211,7 +229,7 @@ export class InventoryService {
       vat_amount: number;
       profit: number;
     }[] = [];
-    const movements: MovementInsert[] = [];
+    const movements: Omit<MovementInsert, 'user_id'>[] = [];
     const updatedProducts = new Map<number, Line>();
 
     for (const line of lines) {
@@ -266,7 +284,8 @@ export class InventoryService {
           vat_amount: update.vat_amount,
           profit: update.profit,
         })
-        .eq('id', update.id);
+        .eq('id', update.id)
+        .eq('user_id', userId);
 
       if (error) {
         throw error;
@@ -287,7 +306,7 @@ export class InventoryService {
     );
   }
 
-  private async insertMovements(movements: MovementInsert[]): Promise<void> {
+  private async insertMovements(movements: Omit<MovementInsert, 'user_id'>[]): Promise<void> {
     if (!movements.length) {
       return;
     }
@@ -297,7 +316,9 @@ export class InventoryService {
     }
 
     const client = this.supabase.ensureClient();
-    const { error } = await client.from(this.movementTable).insert(movements);
+    const userId = await this.supabase.requireAuthenticatedUserId();
+    const payload = movements.map(movement => ({ ...movement, user_id: userId }));
+    const { error } = await client.from(this.movementTable).insert(payload);
     if (error) {
       throw error;
     }
@@ -372,7 +393,7 @@ export class InventoryService {
     };
   }
 
-  private mapLineToInsertPayload(line: Line, fallbackLocationId?: number | null) {
+  private mapLineToInsertPayload(line: Line, fallbackLocationId: number | null | undefined, userId: string) {
     return {
       barcode: line.barcode || null,
       name: line.name,
@@ -385,6 +406,7 @@ export class InventoryService {
       payment: line.payment,
       phone: line.phone || null,
       location_id: line.locationId ?? fallbackLocationId ?? null,
+      user_id: userId,
     };
   }
 

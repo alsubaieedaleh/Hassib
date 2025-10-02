@@ -1,5 +1,5 @@
 import { Injectable, Signal, signal } from '@angular/core';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, type AuthUser } from '@supabase/supabase-js';
 
 import { environment } from '../../../environments/environment';
 
@@ -35,9 +35,9 @@ export class SupabaseService {
           // throw when Zone.js intercepts the promise chain. The Hassib dashboard
           // runs in a single-tab context, so falling back to a no-op lock keeps
           // Supabase session management stable without noisy console errors.
-lock: async <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
-  return await fn();
-}
+          lock: async <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): Promise<R> => {
+            return await fn();
+          },
         },
       });
       this.configuredSignal.set(true);
@@ -74,5 +74,35 @@ lock: async <R>(_name: string, _acquireTimeout: number, fn: () => Promise<R>): P
     }
 
     return this.client;
+  }
+
+  /** Returns the authenticated Supabase user or null when no session is available. */
+  async getAuthenticatedUser(): Promise<AuthUser | null> {
+    if (!this.isConfigured()) {
+      return null;
+    }
+
+    const client = this.ensureClient();
+    const { data, error } = await client.auth.getUser();
+    if (error) {
+      throw error;
+    }
+
+    return data.user ?? null;
+  }
+
+  /** Convenience helper to return just the authenticated user's id if available. */
+  async getAuthenticatedUserId(): Promise<string | null> {
+    const user = await this.getAuthenticatedUser();
+    return user?.id ?? null;
+  }
+
+  /** Ensures a user id is present for the current session or throws a descriptive error. */
+  async requireAuthenticatedUserId(): Promise<string> {
+    const userId = await this.getAuthenticatedUserId();
+    if (!userId) {
+      throw new Error('User is not authenticated.');
+    }
+    return userId;
   }
 }

@@ -30,10 +30,9 @@ export class SalesService {
     }
 
     const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
     const totals = this.calculateTotals(receipt.lines);
     const reference = this.generateReference();
-    const { data: sessionData } = await client.auth.getSession();
-    const userId = sessionData.session?.user?.id ?? null;
 
     const { data: orderRow, error: orderError } = await client
       .from(this.orderTable)
@@ -71,6 +70,7 @@ export class SalesService {
         profit: line.profit,
         payment: line.payment,
         phone: line.phone || null,
+        user_id: userId,
       }));
 
       const { error: lineError } = await client.from(this.lineTable).insert(linePayload);
@@ -79,7 +79,7 @@ export class SalesService {
       }
     } catch (error) {
       if (orderId) {
-        await client.from(this.orderTable).delete().eq('id', orderId);
+        await client.from(this.orderTable).delete().eq('id', orderId).eq('user_id', userId);
       }
       throw error;
     }

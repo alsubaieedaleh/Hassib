@@ -7,6 +7,7 @@ import { Line } from '../models/line.model';
 class SupabaseServiceMock {
   isConfigured = jest.fn(() => true);
   ensureClient = jest.fn();
+  requireAuthenticatedUserId = jest.fn();
 }
 
 describe('SalesService', () => {
@@ -38,7 +39,8 @@ describe('SalesService', () => {
       return Promise.resolve({ error: null });
     });
 
-    const orderDeleteEq = jest.fn().mockResolvedValue({ error: null });
+    const orderDeleteFinal = jest.fn().mockResolvedValue({ error: null });
+    const orderDeleteEq = jest.fn().mockReturnValue({ eq: orderDeleteFinal });
     const orderDelete = jest.fn().mockReturnValue({ eq: orderDeleteEq });
 
     fromMock = jest.fn().mockImplementation((table: string) => {
@@ -61,10 +63,11 @@ describe('SalesService', () => {
     supabase = new SupabaseServiceMock();
     supabase.ensureClient.mockReturnValue({
       auth: {
-        getSession: jest.fn().mockResolvedValue({ data: { session: { user: { id: 'user-1' } } } }),
+        getSession: jest.fn(),
       },
       from: fromMock,
     });
+    supabase.requireAuthenticatedUserId.mockResolvedValue('user-1');
 
     TestBed.configureTestingModule({
       providers: [
@@ -113,6 +116,7 @@ describe('SalesService', () => {
       subtotal: 435,
       vat_amount: 65,
       total: 500,
+      user_id: 'user-1',
     });
     expect(orderInsertPayload.reference).toMatch(/^SO-\d{8}-[A-Z0-9]{4}$/);
 
@@ -132,7 +136,10 @@ describe('SalesService', () => {
       profit: 135,
       payment: 'Cash',
       phone: '0500123456',
+      user_id: 'user-1',
     });
+
+    expect(supabase.requireAuthenticatedUserId).toHaveBeenCalled();
 
     expect(result).toEqual({ id: orderId, reference: 'SO-ORDER-REF' });
 
