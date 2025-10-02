@@ -41,9 +41,18 @@ export class StorageLocationService {
 
     try {
       const client = this.supabase.ensureClient();
+      const userId = await this.supabase.getAuthenticatedUserId();
+
+      if (!userId) {
+        this.locationsSignal.set([]);
+        this.loadingSignal.set(false);
+        return;
+      }
+
       const { data, error } = await client
         .from(this.table)
         .select('id, name, code, address, created_at')
+        .eq('user_id', userId)
         .order('name', { ascending: true });
 
       if (error) {
@@ -70,11 +79,17 @@ export class StorageLocationService {
     }
 
     const client = this.supabase.ensureClient();
+    const userId = await this.supabase.getAuthenticatedUserId();
+
+    if (!userId) {
+      return;
+    }
 
     try {
       const { data, error } = await client
         .from(this.table)
         .select('id, name, code, address, created_at')
+        .eq('user_id', userId)
         .order('id', { ascending: true })
         .limit(1);
 
@@ -89,7 +104,7 @@ export class StorageLocationService {
 
       const { data: inserted, error: insertError } = await client
         .from(this.table)
-        .insert({ name: 'Main Warehouse', code: 'MAIN' })
+        .insert({ name: 'Main Warehouse', code: 'MAIN', user_id: userId })
         .select('id, name, code, address, created_at')
         .single();
 
@@ -112,12 +127,14 @@ export class StorageLocationService {
     }
 
     const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
     const { data, error } = await client
       .from(this.table)
       .insert({
         name: payload.name,
         code: payload.code?.trim() || null,
         address: payload.address?.trim() || null,
+        user_id: userId,
       })
       .select('id, name, code, address, created_at')
       .single();

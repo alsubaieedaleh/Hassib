@@ -11,6 +11,8 @@ class SupabaseServiceMock {
   readonly isConfigured = jest.fn(() => this.configured);
   readonly ensureClient = jest.fn();
   readonly configurationError = jest.fn(() => this.configErrorSignal.asReadonly());
+  readonly getAuthenticatedUserId = jest.fn();
+  readonly requireAuthenticatedUserId = jest.fn();
 
   setConfigured(value: boolean) {
     this.configured = value;
@@ -24,6 +26,7 @@ describe('StorageLocationService', () => {
   let fromMock: jest.Mock;
   let selectMock: jest.Mock;
   let orderMock: jest.Mock;
+  let eqMock: jest.Mock;
   let insertMock: jest.Mock;
   let insertSelectMock: jest.Mock;
   let insertSingleMock: jest.Mock;
@@ -37,7 +40,8 @@ describe('StorageLocationService', () => {
     recordedInsertPayload = undefined;
 
     orderMock = jest.fn().mockResolvedValue({ data: storageRows, error: null });
-    selectMock = jest.fn().mockReturnValue({ order: orderMock });
+    eqMock = jest.fn().mockReturnValue({ order: orderMock });
+    selectMock = jest.fn().mockReturnValue({ eq: eqMock });
 
     insertSingleMock = jest.fn().mockResolvedValue({
       data: { id: 2, name: 'Back Room', code: 'BACK', address: 'Second Floor', created_at: '2024-01-02T00:00:00Z' },
@@ -62,6 +66,8 @@ describe('StorageLocationService', () => {
 
     supabase = new SupabaseServiceMock();
     supabase.ensureClient.mockReturnValue({ from: fromMock });
+    supabase.getAuthenticatedUserId.mockResolvedValue('user-1');
+    supabase.requireAuthenticatedUserId.mockResolvedValue('user-1');
 
     TestBed.configureTestingModule({
       providers: [
@@ -83,6 +89,8 @@ describe('StorageLocationService', () => {
 
     expect(supabase.ensureClient).toHaveBeenCalled();
     expect(fromMock).toHaveBeenCalledWith('storage_locations');
+    expect(selectMock).toHaveBeenCalledWith('id, name, code, address, created_at');
+    expect(eqMock).toHaveBeenCalledWith('user_id', 'user-1');
 
     const locations = service.locations();
     expect(locations()).toEqual([
@@ -103,7 +111,12 @@ describe('StorageLocationService', () => {
 
     expect(fromMock).toHaveBeenCalledWith('storage_locations');
     expect(insertMock).toHaveBeenCalledTimes(1);
-    expect(recordedInsertPayload).toEqual({ name: 'Back Room', code: 'BACK', address: 'Second Floor' });
+    expect(recordedInsertPayload).toEqual({
+      name: 'Back Room',
+      code: 'BACK',
+      address: 'Second Floor',
+      user_id: 'user-1',
+    });
     expect(insertSelectMock).toHaveBeenCalledWith('id, name, code, address, created_at');
     expect(insertSingleMock).toHaveBeenCalled();
 
