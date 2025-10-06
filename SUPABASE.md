@@ -155,6 +155,12 @@ Enable RLS on the tables so that only authenticated users can access them. The f
 provide the minimal permissions required by the application (read and write for authenticated
 users). Add stricter checks if you implement multi-tenant separation.
 
+> **Heads up:** the Angular services scope every request by the authenticated user's id. The
+> repository contains a migration (`supabase/migrations/20240504120000_add_user_id_and_rls.sql`)
+> that adds the required `user_id` columns, indexes and RLS policies. Apply it with
+> `supabase db push` (or copy the statements into the SQL editor) before using the app, otherwise
+> Supabase will reject the queries because the `user_id` columns do not exist.
+
 ```sql
 alter table public.inventory_items enable row level security;
 alter table public.sales_lines enable row level security;
