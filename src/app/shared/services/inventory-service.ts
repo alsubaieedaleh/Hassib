@@ -8,7 +8,8 @@ type InventoryRow = {
   id: number;
   barcode: string | null;
   name: string;
-  qty: number;
+  quantity: number;
+  unit: string | null;
   price: number;
   cost: number;
   gross_total: number;
@@ -26,10 +27,27 @@ type InventoryRow = {
 
 type MovementInsert = {
   inventory_item_id: number;
+  movement_type: 'IN' | 'OUT';
+  change_qty: number;
   location_id: number | null;
-  change: number;
-  reason: string;
   user_id: string;
+};
+
+export interface ProductDto {
+  name: string;
+  sku: string;
+  quantity: number;
+  unit: string;
+  locationId?: number | null;
+}
+
+type InventoryItemSummary = {
+  id: number;
+  sku: string;
+  name: string;
+  quantity: number;
+  unit: string;
+  location_id: number | null;
 };
 
 interface AddProductsOptions {
@@ -92,7 +110,7 @@ export class InventoryService {
       const { data, error } = await client
         .from(this.table)
         .select(
-          'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
+          'id, barcode, name, quantity, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
         )
         .eq('user_id', userId)
         .order('created_at', { ascending: false });
@@ -127,9 +145,9 @@ export class InventoryService {
     const { data, error } = await client
       .from(this.table)
       .insert(payload)
-      .select(
-        'id, barcode, name, qty, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
-      )
+        .select(
+          'id, barcode, name, quantity, price, cost, gross_total, vat_amount, profit, payment, phone, location_id, storage_locations ( id, name, code )'
+        )
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
@@ -144,9 +162,9 @@ export class InventoryService {
         await this.insertMovements(
           inserted.map((line: Line) => ({
             inventory_item_id: line.id,
+            movement_type: 'IN',
+            change_qty: Math.abs(line.qty),
             location_id: line.locationId ?? options.locationId ?? null,
-            change: Math.abs(line.qty),
-            reason: options.reason ?? 'Manual addition',
           }))
         );
       } catch (movementError) {
@@ -157,7 +175,190 @@ export class InventoryService {
     return inserted.length;
   }
 
-  async removeProduct(id: number, reason = 'Manual removal'): Promise<void> {
+  async importProducts(products: ProductDto[]): Promise<number> {
+    if (!products.length) {
+      return 0;
+    }
+
+    if (!this.supabase.isConfigured()) {
+      throw new Error('Supabase credentials are not configured.');
+    }
+
+    const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
+
+    const aggregated = new Map<string, { name: string; quantity: number; unit: string; locationId: number | null }>();
+
+    for (const product of products) {
+      const sku = product.sku?.trim();
+      const name = product.name?.trim();
+      const unit = product.unit?.trim() || 'unit';
+      const quantity = Number(product.quantity ?? 0);
+
+      if (!sku || !name || !Number.isFinite(quantity) || quantity <= 0) {
+        continue;
+      }
+
+      const existing = aggregated.get(sku);
+      if (existing) {
+        existing.quantity += quantity;
+        existing.name = name || existing.name;
+        existing.unit = unit || existing.unit;
+        if (product.locationId != null) {
+          existing.locationId = product.locationId;
+        }
+      } else {
+        aggregated.set(sku, {
+          name,
+          quantity,
+          unit,
+          locationId: product.locationId ?? null,
+        });
+      }
+    }
+
+    const uniqueProducts = Array.from(aggregated.entries()).map(([sku, value]) => ({ sku, ...value }));
+    if (!uniqueProducts.length) {
+      return 0;
+    }
+
+    const skus = uniqueProducts.map(product => product.sku);
+    const { data: existingRows, error: existingError } = await client
+      .from(this.table)
+      .select('id, sku, name, quantity, unit, location_id')
+      .eq('user_id', userId)
+      .in('sku', skus);
+
+    if (existingError) {
+      throw existingError;
+    }
+
+    const existingMap = new Map<string, InventoryItemSummary>();
+    for (const row of existingRows ?? []) {
+      existingMap.set(row.sku, {
+        id: Number(row.id) || 0,
+        sku: row.sku,
+        name: row.name,
+        quantity: Number(row.quantity) || 0,
+        unit: row.unit ?? 'unit',
+        location_id: row.location_id ?? null,
+      });
+    }
+
+    const upsertPayload = uniqueProducts.map(product => {
+      const existing = existingMap.get(product.sku);
+      const locationId = product.locationId ?? existing?.location_id ?? null;
+      const existingQuantity = existing?.quantity ?? 0;
+
+      return {
+        id: existing?.id,
+        name: product.name,
+        sku: product.sku,
+        quantity: existingQuantity + product.quantity,
+        unit: product.unit,
+        location_id: locationId,
+        user_id: userId,
+      };
+    });
+
+    const { data: upsertedRows, error: upsertError } = await client
+      .from(this.table)
+      .upsert(upsertPayload, { onConflict: 'sku,user_id' })
+      .select('id, sku, quantity, unit, location_id, name');
+
+    if (upsertError) {
+      throw upsertError;
+    }
+
+    const insertedMap = new Map<string, InventoryItemSummary>();
+    for (const row of upsertedRows ?? []) {
+      insertedMap.set(row.sku, {
+        id: Number(row.id) || 0,
+        sku: row.sku,
+        name: row.name,
+        quantity: Number(row.quantity) || 0,
+        unit: row.unit ?? 'unit',
+        location_id: row.location_id ?? null,
+      });
+    }
+
+    const movementPayload: Omit<MovementInsert, 'user_id'>[] = [];
+    for (const product of uniqueProducts) {
+      const record = insertedMap.get(product.sku) ?? existingMap.get(product.sku);
+      if (!record || !record.id) {
+        continue;
+      }
+
+      movementPayload.push({
+        inventory_item_id: record.id,
+        movement_type: 'IN',
+        change_qty: product.quantity,
+        location_id: product.locationId ?? record.location_id ?? null,
+      });
+    }
+
+    if (movementPayload.length) {
+      await this.insertMovements(movementPayload);
+    }
+
+    await this.refresh();
+    return uniqueProducts.length;
+  }
+
+  async addToStorage(itemId: number, quantity: number, locationId: number | null): Promise<void> {
+    if (quantity <= 0) {
+      throw new Error('Quantity must be greater than zero.');
+    }
+
+    if (!this.supabase.isConfigured()) {
+      throw new Error('Supabase credentials are not configured.');
+    }
+
+    const client = this.supabase.ensureClient();
+    const userId = await this.supabase.requireAuthenticatedUserId();
+
+    const { data: existing, error: fetchError } = await client
+      .from(this.table)
+      .select('id, quantity, location_id')
+      .eq('user_id', userId)
+      .eq('id', itemId)
+      .single();
+
+    if (fetchError) {
+      throw fetchError;
+    }
+
+    if (!existing) {
+      throw new Error('Inventory item not found.');
+    }
+
+    const currentQuantity = Number(existing.quantity) || 0;
+    const nextQuantity = currentQuantity + quantity;
+    const resolvedLocationId = locationId ?? existing.location_id ?? null;
+
+    const { error: updateError } = await client
+      .from(this.table)
+      .update({ quantity: nextQuantity, location_id: resolvedLocationId })
+      .eq('id', itemId)
+      .eq('user_id', userId);
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    await this.insertMovements([
+      {
+        inventory_item_id: itemId,
+        movement_type: 'IN',
+        change_qty: quantity,
+        location_id: resolvedLocationId,
+      },
+    ]);
+
+    await this.refresh();
+  }
+
+  async removeProduct(id: number, _reason = 'Manual removal'): Promise<void> {
     if (!this.supabase.isConfigured()) {
       throw new Error('Supabase credentials are not configured.');
     }
@@ -186,9 +387,9 @@ export class InventoryService {
         await this.insertMovements([
           {
             inventory_item_id: id,
+            movement_type: 'OUT',
+            change_qty: Math.abs(existing.qty),
             location_id: existing.locationId ?? null,
-            change: -Math.abs(existing.qty),
-            reason,
           },
         ]);
       }
@@ -224,7 +425,7 @@ export class InventoryService {
 
     const updates: {
       id: number;
-      qty: number;
+      quantity: number;
       gross_total: number;
       vat_amount: number;
       profit: number;
@@ -249,7 +450,7 @@ export class InventoryService {
 
       updates.push({
         id: match.id,
-        qty: newQty,
+        quantity: newQty,
         gross_total: aggregates.gross_total,
         vat_amount: aggregates.vat_amount,
         profit: aggregates.profit,
@@ -257,9 +458,9 @@ export class InventoryService {
 
       movements.push({
         inventory_item_id: match.id,
+        movement_type: 'OUT',
+        change_qty: Math.abs(line.qty),
         location_id: match.locationId ?? null,
-        change: -Math.abs(line.qty),
-        reason: order?.reference ? `Sale ${order.reference}` : 'Sale',
       });
 
       updatedProducts.set(match.id, {
@@ -275,17 +476,17 @@ export class InventoryService {
       return;
     }
 
-    for (const update of updates) {
-      const { error } = await client
-        .from(this.table)
-        .update({
-          qty: update.qty,
-          gross_total: update.gross_total,
-          vat_amount: update.vat_amount,
-          profit: update.profit,
-        })
-        .eq('id', update.id)
-        .eq('user_id', userId);
+      for (const update of updates) {
+        const { error } = await client
+          .from(this.table)
+          .update({
+            quantity: update.quantity,
+            gross_total: update.gross_total,
+            vat_amount: update.vat_amount,
+            profit: update.profit,
+          })
+          .eq('id', update.id)
+          .eq('user_id', userId);
 
       if (error) {
         throw error;
@@ -379,7 +580,7 @@ export class InventoryService {
       id: Number(row.id) || 0,
       barcode: row.barcode ?? '',
       name: row.name ?? '',
-      qty: Number(row.qty) || 0,
+      qty: Number(row.quantity) || 0,
       price: Number(row.price) || 0,
       cost: Number(row.cost) || 0,
       grossTotal: Number(row.gross_total) || 0,
@@ -397,7 +598,8 @@ export class InventoryService {
     return {
       barcode: line.barcode || null,
       name: line.name,
-      qty: line.qty,
+      quantity: line.qty,
+      unit: 'unit',
       price: line.price,
       cost: line.cost,
       gross_total: line.grossTotal,
