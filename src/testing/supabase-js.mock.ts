@@ -20,36 +20,68 @@ export type AuthChangeEvent =
 
 export type Session = AuthSession;
 
-export type SupabaseClient = any;
+const createQueryBuilder = () => {
+  const baseResult = { data: [], error: null };
+  const order = jest.fn().mockResolvedValue(baseResult);
+  const single = jest.fn().mockResolvedValue({ data: null, error: null });
 
-export const createClient = (
-  _url?: unknown,
-  _anonKey?: unknown,
-  _options?: unknown
-): SupabaseClient => ({
-  from: () => ({
-    select: () => ({
-      order: async () => ({ data: [], error: null }),
-      single: async () => ({ data: null, error: null }),
-    }),
-    insert: () => ({
-      select: () => ({
-        order: async () => ({ data: [], error: null }),
-        single: async () => ({ data: null, error: null }),
+  const builder: any = {
+    order,
+    single,
+  };
+
+  builder.eq = jest.fn().mockReturnValue(builder);
+
+  return builder;
+};
+
+const createMutationBuilder = () => {
+  const eqResult = { error: null };
+  const builder: any = {
+    eq: jest.fn().mockResolvedValue(eqResult),
+  };
+
+  return builder;
+};
+
+const createInsertBuilder = () => {
+  const selectBuilder = createQueryBuilder();
+  return {
+    select: jest.fn().mockReturnValue(selectBuilder),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  };
+};
+
+const createAuthApi = () => {
+  const unsubscribe = jest.fn();
+
+  return {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+    onAuthStateChange: jest.fn().mockReturnValue({ data: { subscription: { unsubscribe } }, error: null }),
+    signInWithPassword: jest.fn().mockResolvedValue({ error: null }),
+    signUp: jest.fn().mockResolvedValue({ error: null }),
+    signOut: jest.fn().mockResolvedValue({ error: null }),
+  };
+};
+
+export const createClient = jest.fn(
+  (_url?: unknown, _anonKey?: unknown, _options?: unknown) => {
+    const queryBuilder = createQueryBuilder();
+
+    return {
+      from: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue(createQueryBuilder()),
+        insert: jest.fn().mockImplementation(() => createInsertBuilder()),
+        update: jest.fn().mockImplementation(() => createMutationBuilder()),
+        delete: jest.fn().mockImplementation(() => createMutationBuilder()),
+        eq: queryBuilder.eq,
+        order: queryBuilder.order,
+        single: queryBuilder.single,
       }),
-      single: async () => ({ data: null, error: null }),
-    }),
-    update: () => ({ eq: async () => ({ error: null }) }),
-    delete: () => ({ eq: async () => ({ error: null }) }),
-    eq: async () => ({ error: null }),
-    order: async () => ({ data: [], error: null }),
-    single: async () => ({ data: null, error: null }),
-  }),
-  auth: {
-    getSession: async () => ({ data: { session: null } }),
-    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => undefined } } }),
-    signInWithPassword: async () => ({ error: null }),
-    signUp: async () => ({ error: null }),
-    signOut: async () => ({ error: null }),
-  },
-});
+      auth: createAuthApi(),
+    };
+  }
+);
+
+export type SupabaseClient = ReturnType<typeof createClient>;

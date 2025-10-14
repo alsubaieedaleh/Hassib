@@ -155,9 +155,16 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   structuredDataJson = '';
 
   constructor() {
-    this.title.setTitle('Hassib VAT Suite | GCC Trader Compliance & POS Platform');
-    this.meta.updateTag({ name: 'description', content: 'Hassib VAT Suite unifies GCC POS, live trading analytics and automated VAT workflows.' });
+    const pageTitle = 'Hassib VAT Suite | GCC Trader Compliance & POS Platform';
+    const pageDescription = 'Hassib VAT Suite unifies GCC POS, live trading analytics and automated VAT workflows.';
+
+    this.meta.updateTag({ name: 'description', content: pageDescription });
+    this.meta.updateTag({ property: 'og:title', content: pageTitle });
+    this.meta.updateTag({ property: 'og:description', content: pageDescription });
+    this.meta.updateTag({ property: 'og:url', content: 'https://app.hassib.dev/landing' });
+    this.title.setTitle(pageTitle);
     this.ensureCanonicalLink('https://app.hassib.dev/landing');
+    this.buildStructuredData();
     this.vatCheckerForm.valueChanges
       .pipe(startWith(this.vatCheckerForm.value), auditTime(0), takeUntilDestroyed())
       .subscribe(() => {
@@ -238,5 +245,35 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     });
     this.tickerData.set(items);
     this.tickerIndex.update(i => (i + 1) % items.length);
+  }
+
+  private buildStructuredData(): void {
+    const faqEntities = this.faqItems.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    }));
+
+    const structuredData = [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'Hassib VAT Suite',
+        url: 'https://app.hassib.dev/landing',
+        description:
+          'Hassib VAT Suite unifies GCC POS, live trading analytics and automated VAT workflows.',
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqEntities,
+      },
+    ];
+
+    this.structuredDataJson = JSON.stringify(structuredData);
+    this.schemaMarkup = this.sanitizer.bypassSecurityTrustHtml(this.structuredDataJson);
   }
 }
